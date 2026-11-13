@@ -1,0 +1,20 @@
+/** Paleta do Bico Certo: laranja de "mao na massa" + azul-marinho de confianca. */
+export const cores = {
+  primaria: '#F26B1D',
+  primariaEscura: '#C9530F',
+  primariaClara: '#FDE6D7',
+  secundaria: '#1E2A44',
+  secundariaClara: '#E6E9F0',
+  fundo: '#F7F5F2',
+  superficie: '#FFFFFF',
+  texto: '#1E2A44',
+  textoSuave: '#5B6478',
+  borda: '#DCDFE6',
+  sucesso: '#1F9D55',
+  sucessoClaro: '#DDF5E6',
+  alerta: '#D97706',
+  alertaClaro: '#FEF3C7',
+  perigo: '#D64545',
+  perigoClaro: '#FDE2E2',
+  branco: '#FFFFFF',
+} as const;
