@@ -25,7 +25,8 @@ export function AgendaScreen({ navigation }: Props) {
   const { data, isLoading, isError, error, refetch, isRefetching } = useContratacoes();
 
   if (isLoading) return <Carregando texto="Carregando sua agenda..." />;
-  if (isError) return <MensagemErro mensagem={mensagemDeErro(error)} aoTentarDeNovo={() => void refetch()} />;
+  if (isError)
+    return <MensagemErro mensagem={mensagemDeErro(error)} aoTentarDeNovo={() => void refetch()} />;
 
   return (
     <FlatList
@@ -36,7 +37,9 @@ export function AgendaScreen({ navigation }: Props) {
       renderItem={({ item }) => {
         const selo = seloContratacao[item.status];
         return (
-          <Cartao aoPressionar={() => navigation.navigate('DetalheServico', { id: item.solicitacaoId })}>
+          <Cartao
+            aoPressionar={() => navigation.navigate('DetalheServico', { id: item.solicitacaoId })}
+          >
             <View style={estilos.linha}>
               <View style={estilos.data}>
                 <Ionicons name="calendar-outline" size={18} color={cores.secundaria} />
@@ -50,7 +53,11 @@ export function AgendaScreen({ navigation }: Props) {
         );
       }}
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} tintColor={cores.primaria} />
+        <RefreshControl
+          refreshing={isRefetching}
+          onRefresh={() => void refetch()}
+          tintColor={cores.primaria}
+        />
       }
       ListEmptyComponent={
         <EstadoVazio
@@ -69,6 +76,11 @@ const estilos = StyleSheet.create({
   linha: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   data: { flexDirection: 'row', alignItems: 'center', gap: espacos.xs },
   dataTexto: { fontFamily: fontes.seminegrito, fontSize: tamanhos.normal, color: cores.secundaria },
-  valor: { fontFamily: fontes.negrito, fontSize: tamanhos.grande, color: cores.primariaEscura, marginTop: espacos.sm },
+  valor: {
+    fontFamily: fontes.negrito,
+    fontSize: tamanhos.grande,
+    color: cores.primariaEscura,
+    marginTop: espacos.sm,
+  },
   meta: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave },
 });

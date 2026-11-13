@@ -66,7 +66,8 @@ export function NovoPedidoScreen({ navigation }: Props) {
       <Text style={estilos.ola}>Ola, {usuario?.nome.split(' ')[0]}!</Text>
       <Text style={estilos.titulo}>O que precisa de conserto?</Text>
       <Text style={estilos.subtitulo}>
-        Conte com suas palavras. A gente identifica o tipo de servico, a urgencia e quanto e justo pagar.
+        Conte com suas palavras. A gente identifica o tipo de servico, a urgencia e quanto e justo
+        pagar.
       </Text>
 
       <CampoTexto
@@ -81,10 +82,16 @@ export function NovoPedidoScreen({ navigation }: Props) {
       <CampoTexto rotulo="Bairro do servico" value={bairro} onChangeText={setBairro} />
 
       {!triagem && (
-        <Botao titulo="Analisar meu problema" aoPressionar={aoAnalisar} carregando={analisar.isPending} />
+        <Botao
+          titulo="Analisar meu problema"
+          aoPressionar={aoAnalisar}
+          carregando={analisar.isPending}
+        />
       )}
       {analisar.isPending && (
-        <Text style={estilos.aguarde}>Analisando o problema... isso pode levar alguns segundos.</Text>
+        <Text style={estilos.aguarde}>
+          Analisando o problema... isso pode levar alguns segundos.
+        </Text>
       )}
       {analisar.isError && <Text style={estilos.erro}>{mensagemDeErro(analisar.error)}</Text>}
 
@@ -103,7 +110,9 @@ export function NovoPedidoScreen({ navigation }: Props) {
           {confirmar.isError && <Text style={estilos.erro}>{mensagemDeErro(confirmar.error)}</Text>}
           <Botao
             titulo="Confirmar pedido"
-            aoPressionar={() => confirmar.mutate({ descricao: descricao.trim(), bairro: bairro.trim() })}
+            aoPressionar={() =>
+              confirmar.mutate({ descricao: descricao.trim(), bairro: bairro.trim() })
+            }
             carregando={confirmar.isPending}
           />
           <Botao

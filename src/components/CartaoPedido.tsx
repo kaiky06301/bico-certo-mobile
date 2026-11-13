@@ -43,8 +43,18 @@ export function CartaoPedido({ pedido, aoPressionar }: Props) {
 }
 
 const estilos = StyleSheet.create({
-  linha: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: espacos.sm },
-  categoria: { fontFamily: fontes.seminegrito, fontSize: tamanhos.medio, color: cores.texto, flexShrink: 1 },
+  linha: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: espacos.sm,
+  },
+  categoria: {
+    fontFamily: fontes.seminegrito,
+    fontSize: tamanhos.medio,
+    color: cores.texto,
+    flexShrink: 1,
+  },
   descricao: {
     fontFamily: fontes.regular,
     fontSize: tamanhos.normal,

@@ -58,7 +58,9 @@ export function CadastroScreen() {
   return (
     <TelaFormulario>
       <Text style={estilos.titulo}>Crie sua conta</Text>
-      <Text style={estilos.subtitulo}>Voce quer contratar um servico ou oferecer o seu trabalho?</Text>
+      <Text style={estilos.subtitulo}>
+        Voce quer contratar um servico ou oferecer o seu trabalho?
+      </Text>
 
       <Opcoes<TipoConta>
         opcoes={[
@@ -107,7 +109,9 @@ export function CadastroScreen() {
           <Text style={estilos.rotulo}>Qual servico voce faz?</Text>
           {categorias.isLoading && <Text style={estilos.ajuda}>Carregando servicos...</Text>}
           {categorias.isError && (
-            <Text style={estilos.erroCampo}>Nao foi possivel carregar os servicos. Verifique a conexao.</Text>
+            <Text style={estilos.erroCampo}>
+              Nao foi possivel carregar os servicos. Verifique a conexao.
+            </Text>
           )}
           <Opcoes<number>
             opcoes={(categorias.data ?? []).map((c) => ({ valor: c.id, rotulo: c.nome }))}
@@ -139,7 +143,12 @@ const estilos = StyleSheet.create({
     color: cores.textoSuave,
     marginBottom: espacos.lg,
   },
-  rotulo: { fontFamily: fontes.media, fontSize: tamanhos.normal, color: cores.texto, marginBottom: espacos.sm },
+  rotulo: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.normal,
+    color: cores.texto,
+    marginBottom: espacos.sm,
+  },
   ajuda: { fontFamily: fontes.regular, color: cores.textoSuave, marginBottom: espacos.sm },
   erroCampo: {
     fontFamily: fontes.regular,

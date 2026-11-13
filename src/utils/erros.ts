@@ -1,8 +1,8 @@
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 
 /** Transforma o erro de qualquer uma das APIs em uma mensagem amigavel para o usuario. */
 export function mensagemDeErro(erro: unknown): string {
-  if (axios.isAxiosError(erro)) {
+  if (isAxiosError(erro)) {
     if (!erro.response) {
       return 'Sem conexao com o servidor. Verifique sua internet e tente de novo.';
     }

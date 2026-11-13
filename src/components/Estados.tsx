@@ -14,13 +14,24 @@ export function Carregando({ texto = 'Carregando...' }: { texto?: string }) {
   );
 }
 
-export function MensagemErro({ mensagem, aoTentarDeNovo }: { mensagem: string; aoTentarDeNovo?: () => void }) {
+export function MensagemErro({
+  mensagem,
+  aoTentarDeNovo,
+}: {
+  mensagem: string;
+  aoTentarDeNovo?: () => void;
+}) {
   return (
     <View style={estilos.centro}>
       <Ionicons name="cloud-offline-outline" size={48} color={cores.perigo} />
       <Text style={estilos.texto}>{mensagem}</Text>
       {aoTentarDeNovo && (
-        <Botao titulo="Tentar de novo" variante="contorno" aoPressionar={aoTentarDeNovo} estilo={estilos.botao} />
+        <Botao
+          titulo="Tentar de novo"
+          variante="contorno"
+          aoPressionar={aoTentarDeNovo}
+          estilo={estilos.botao}
+        />
       )}
     </View>
   );
@@ -45,8 +56,24 @@ export function EstadoVazio({
 }
 
 const estilos = StyleSheet.create({
-  centro: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: espacos.xl, gap: espacos.sm },
-  titulo: { fontFamily: fontes.seminegrito, fontSize: tamanhos.grande, color: cores.texto, textAlign: 'center' },
-  texto: { fontFamily: fontes.regular, fontSize: tamanhos.normal, color: cores.textoSuave, textAlign: 'center' },
+  centro: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: espacos.xl,
+    gap: espacos.sm,
+  },
+  titulo: {
+    fontFamily: fontes.seminegrito,
+    fontSize: tamanhos.grande,
+    color: cores.texto,
+    textAlign: 'center',
+  },
+  texto: {
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.normal,
+    color: cores.textoSuave,
+    textAlign: 'center',
+  },
   botao: { marginTop: espacos.md, alignSelf: 'stretch' },
 });

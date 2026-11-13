@@ -40,7 +40,10 @@ export async function buscarSolicitacao(id: number): Promise<Solicitacao> {
   return data;
 }
 
-export async function atualizarSolicitacao(id: number, dados: SolicitacaoRequest): Promise<Solicitacao> {
+export async function atualizarSolicitacao(
+  id: number,
+  dados: SolicitacaoRequest,
+): Promise<Solicitacao> {
   const { data } = await apiJava.put<Solicitacao>(`${BASE}/${id}`, dados);
   return data;
 }

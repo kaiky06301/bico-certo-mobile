@@ -8,7 +8,9 @@ export const esquemaLogin = Yup.object({
 export const esquemaCadastro = Yup.object({
   nome: Yup.string().trim().required('Informe seu nome').min(3, 'Nome muito curto'),
   email: Yup.string().trim().required('Informe o e-mail').email('E-mail invalido'),
-  senha: Yup.string().required('Crie uma senha').min(6, 'A senha precisa ter pelo menos 6 caracteres'),
+  senha: Yup.string()
+    .required('Crie uma senha')
+    .min(6, 'A senha precisa ter pelo menos 6 caracteres'),
   telefone: Yup.string()
     .trim()
     .matches(/^[0-9()+\- ]{8,20}$/, { message: 'Telefone invalido', excludeEmptyString: true }),

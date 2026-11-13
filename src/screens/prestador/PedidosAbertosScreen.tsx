@@ -22,7 +22,8 @@ export function PedidosAbertosScreen({ navigation }: Props) {
   const { data, isLoading, isError, error, refetch, isRefetching } = useSolicitacoesAbertas();
 
   if (isLoading) return <Carregando texto="Buscando pedidos da sua area..." />;
-  if (isError) return <MensagemErro mensagem={mensagemDeErro(error)} aoTentarDeNovo={() => void refetch()} />;
+  if (isError)
+    return <MensagemErro mensagem={mensagemDeErro(error)} aoTentarDeNovo={() => void refetch()} />;
 
   return (
     <FlatList
@@ -32,14 +33,22 @@ export function PedidosAbertosScreen({ navigation }: Props) {
       keyExtractor={(pedido) => String(pedido.id)}
       ListHeaderComponent={
         <Text style={estilos.cabecalho}>
-          Ola, {usuario?.nome.split(' ')[0]}! Estes pedidos sao da sua area e estao esperando orcamento.
+          Ola, {usuario?.nome.split(' ')[0]}! Estes pedidos sao da sua area e estao esperando
+          orcamento.
         </Text>
       }
       renderItem={({ item }) => (
-        <CartaoPedido pedido={item} aoPressionar={() => navigation.navigate('DetalheServico', { id: item.id })} />
+        <CartaoPedido
+          pedido={item}
+          aoPressionar={() => navigation.navigate('DetalheServico', { id: item.id })}
+        />
       )}
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} tintColor={cores.primaria} />
+        <RefreshControl
+          refreshing={isRefetching}
+          onRefresh={() => void refetch()}
+          tintColor={cores.primaria}
+        />
       }
       ListEmptyComponent={
         <EstadoVazio

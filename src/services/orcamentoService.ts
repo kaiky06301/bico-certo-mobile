@@ -1,4 +1,10 @@
-import { Contratacao, ContratacaoRequest, Orcamento, OrcamentoRequest, StatusContratacao } from '../models/contratacao';
+import {
+  Contratacao,
+  ContratacaoRequest,
+  Orcamento,
+  OrcamentoRequest,
+  StatusContratacao,
+} from '../models/contratacao';
 import { Pagina } from '../models/pagina';
 import { apiNet } from './httpClient';
 
@@ -22,7 +28,10 @@ export async function listarOrcamentos(solicitacaoId?: number): Promise<Pagina<O
   return data;
 }
 
-export async function aceitarOrcamento(dados: ContratacaoRequest, chave: string): Promise<Contratacao> {
+export async function aceitarOrcamento(
+  dados: ContratacaoRequest,
+  chave: string,
+): Promise<Contratacao> {
   const { data } = await apiNet.post<Contratacao>('/api/contratacoes', dados, comChave(chave));
   return data;
 }
@@ -34,7 +43,10 @@ export async function listarContratacoes(): Promise<Pagina<Contratacao>> {
   return data;
 }
 
-export async function alterarStatusContratacao(id: number, status: StatusContratacao): Promise<Contratacao> {
+export async function alterarStatusContratacao(
+  id: number,
+  status: StatusContratacao,
+): Promise<Contratacao> {
   const { data } = await apiNet.patch<Contratacao>(`/api/contratacoes/${id}/status`, { status });
   return data;
 }

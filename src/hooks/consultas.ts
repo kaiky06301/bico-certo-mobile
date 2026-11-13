@@ -24,11 +24,18 @@ export const chaves = {
 };
 
 export function useCategorias() {
-  return useQuery({ queryKey: chaves.categorias, queryFn: listarCategorias, staleTime: 10 * 60 * 1000 });
+  return useQuery({
+    queryKey: chaves.categorias,
+    queryFn: listarCategorias,
+    staleTime: 10 * 60 * 1000,
+  });
 }
 
 export function useMinhasSolicitacoes() {
-  return useQuery({ queryKey: chaves.minhasSolicitacoes, queryFn: () => listarMinhasSolicitacoes() });
+  return useQuery({
+    queryKey: chaves.minhasSolicitacoes,
+    queryFn: () => listarMinhasSolicitacoes(),
+  });
 }
 
 export function useSolicitacoesAbertas() {

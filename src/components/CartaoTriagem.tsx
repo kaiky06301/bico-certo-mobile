@@ -38,7 +38,9 @@ export function CartaoTriagem(props: Props) {
 
       <View style={estilos.preco}>
         <Text style={estilos.precoRotulo}>Preco justo para esse servico</Text>
-        <Text style={estilos.precoValor}>{formatarFaixa(props.precoMinimo, props.precoMaximo)}</Text>
+        <Text style={estilos.precoValor}>
+          {formatarFaixa(props.precoMinimo, props.precoMaximo)}
+        </Text>
       </View>
 
       <View style={estilos.dica}>
@@ -59,8 +61,17 @@ export function CartaoTriagem(props: Props) {
 
 const estilos = StyleSheet.create({
   cartao: { borderColor: cores.primaria, borderWidth: 1.5 },
-  cabecalho: { flexDirection: 'row', alignItems: 'center', gap: espacos.xs, marginBottom: espacos.sm },
-  cabecalhoTexto: { fontFamily: fontes.seminegrito, fontSize: tamanhos.pequeno, color: cores.primaria },
+  cabecalho: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espacos.xs,
+    marginBottom: espacos.sm,
+  },
+  cabecalhoTexto: {
+    fontFamily: fontes.seminegrito,
+    fontSize: tamanhos.pequeno,
+    color: cores.primaria,
+  },
   categoria: { fontFamily: fontes.negrito, fontSize: tamanhos.grande, color: cores.texto },
   resumo: {
     fontFamily: fontes.regular,
@@ -74,8 +85,16 @@ const estilos = StyleSheet.create({
     padding: espacos.md,
     marginTop: espacos.md,
   },
-  precoRotulo: { fontFamily: fontes.media, fontSize: tamanhos.pequeno, color: cores.primariaEscura },
-  precoValor: { fontFamily: fontes.negrito, fontSize: tamanhos.grande, color: cores.primariaEscura },
+  precoRotulo: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.pequeno,
+    color: cores.primariaEscura,
+  },
+  precoValor: {
+    fontFamily: fontes.negrito,
+    fontSize: tamanhos.grande,
+    color: cores.primariaEscura,
+  },
   dica: {
     flexDirection: 'row',
     gap: espacos.sm,
@@ -84,7 +103,12 @@ const estilos = StyleSheet.create({
     padding: espacos.md,
     marginTop: espacos.sm,
   },
-  dicaTexto: { flex: 1, fontFamily: fontes.regular, fontSize: tamanhos.normal, color: cores.secundaria },
+  dicaTexto: {
+    flex: 1,
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.normal,
+    color: cores.secundaria,
+  },
   prestadores: {
     fontFamily: fontes.regular,
     fontSize: tamanhos.pequeno,

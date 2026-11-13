@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import { AxiosInstance, create } from 'axios';
 
 import { JAVA_API_URL, NET_API_URL, TEMPO_LIMITE_MS } from '../config/api';
 
@@ -16,7 +16,7 @@ export function definirAcaoSessaoExpirada(acao: (() => void) | null) {
 }
 
 function criarCliente(baseURL: string): AxiosInstance {
-  const cliente = axios.create({
+  const cliente = create({
     baseURL,
     timeout: TEMPO_LIMITE_MS,
     headers: { 'Content-Type': 'application/json' },

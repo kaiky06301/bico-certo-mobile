@@ -19,7 +19,12 @@ import { assumirSolicitacao, concluirSolicitacao } from '../../services/solicita
 import { cores } from '../../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../../theme/tipografia';
 import { mensagemDeErro } from '../../utils/erros';
-import { formatarDataHora, formatarFaixa, formatarMoeda, gerarChaveUnica } from '../../utils/formatacao';
+import {
+  formatarDataHora,
+  formatarFaixa,
+  formatarMoeda,
+  gerarChaveUnica,
+} from '../../utils/formatacao';
 import { esquemaOrcamento, validar } from '../../validation/esquemas';
 
 type Props = NativeStackScreenProps<PrestadorStackParams, 'DetalheServico'>;
@@ -43,7 +48,9 @@ export function DetalheServicoScreen({ route }: Props) {
   const chaveOrcamento = useRef(gerarChaveUnica());
 
   const meuOrcamento = orcamentos.data?.conteudo[0];
-  const contratacao = contratacoes.data?.conteudo.find((c) => c.solicitacaoId === id && c.status !== 'Cancelada');
+  const contratacao = contratacoes.data?.conteudo.find(
+    (c) => c.solicitacaoId === id && c.status !== 'Cancelada',
+  );
 
   function atualizarTudo() {
     queryClient.invalidateQueries({ queryKey: chaves.solicitacao(id) });
@@ -94,7 +101,12 @@ export function DetalheServicoScreen({ route }: Props) {
 
   if (pedido.isLoading) return <Carregando />;
   if (pedido.isError || !pedido.data) {
-    return <MensagemErro mensagem={mensagemDeErro(pedido.error)} aoTentarDeNovo={() => void pedido.refetch()} />;
+    return (
+      <MensagemErro
+        mensagem={mensagemDeErro(pedido.error)}
+        aoTentarDeNovo={() => void pedido.refetch()}
+      />
+    );
   }
 
   const p = pedido.data;
@@ -105,7 +117,11 @@ export function DetalheServicoScreen({ route }: Props) {
       style={estilos.tela}
       contentContainerStyle={estilos.conteudo}
       refreshControl={
-        <RefreshControl refreshing={pedido.isRefetching} onRefresh={atualizarTudo} tintColor={cores.primaria} />
+        <RefreshControl
+          refreshing={pedido.isRefetching}
+          onRefresh={atualizarTudo}
+          tintColor={cores.primaria}
+        />
       }
     >
       <View style={estilos.topo}>
@@ -153,7 +169,9 @@ export function DetalheServicoScreen({ route }: Props) {
                 tom={seloContratacao[contratacao.status].tom}
               />
             </View>
-            <Text style={estilos.meta}>Agendado para {formatarDataHora(contratacao.dataAgendada)}</Text>
+            <Text style={estilos.meta}>
+              Agendado para {formatarDataHora(contratacao.dataAgendada)}
+            </Text>
             {contratacao.status === 'Agendada' && (
               <Botao
                 titulo="Iniciar servico"
@@ -172,7 +190,9 @@ export function DetalheServicoScreen({ route }: Props) {
               />
             )}
             {contratacao.status === 'Concluida' && (
-              <Text style={estilos.sucesso}>Servico concluido. O cliente foi convidado a avaliar voce.</Text>
+              <Text style={estilos.sucesso}>
+                Servico concluido. O cliente foi convidado a avaliar voce.
+              </Text>
             )}
             {(iniciar.isError || concluir.isError) && (
               <Text style={estilos.erro}>{mensagemDeErro(iniciar.error ?? concluir.error)}</Text>
@@ -227,7 +247,11 @@ export function DetalheServicoScreen({ route }: Props) {
               maxLength={500}
             />
             {enviar.isError && <Text style={estilos.erro}>{mensagemDeErro(enviar.error)}</Text>}
-            <Botao titulo="Enviar orcamento" carregando={enviar.isPending} aoPressionar={aoEnviar} />
+            <Botao
+              titulo="Enviar orcamento"
+              carregando={enviar.isPending}
+              aoPressionar={aoEnviar}
+            />
           </Cartao>
         </>
       ) : null}
@@ -240,9 +264,24 @@ const estilos = StyleSheet.create({
   conteudo: { padding: espacos.md, paddingBottom: espacos.xl * 2 },
   topo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   numero: { fontFamily: fontes.seminegrito, fontSize: tamanhos.normal, color: cores.textoSuave },
-  descricao: { fontFamily: fontes.media, fontSize: tamanhos.medio, color: cores.texto, marginTop: espacos.sm },
-  meta: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave, marginVertical: espacos.xs },
-  linha: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: espacos.sm },
+  descricao: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.medio,
+    color: cores.texto,
+    marginTop: espacos.sm,
+  },
+  meta: {
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.pequeno,
+    color: cores.textoSuave,
+    marginVertical: espacos.xs,
+  },
+  linha: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: espacos.sm,
+  },
   valor: { fontFamily: fontes.negrito, fontSize: tamanhos.grande, color: cores.primariaEscura },
   contato: { flexDirection: 'row', alignItems: 'center', gap: espacos.sm },
   contatoTexto: { flex: 1, fontFamily: fontes.media, color: cores.secundaria },
@@ -256,5 +295,10 @@ const estilos = StyleSheet.create({
     borderRadius: raio.medio,
     marginTop: espacos.sm,
   },
-  erro: { fontFamily: fontes.media, color: cores.perigo, textAlign: 'center', marginVertical: espacos.sm },
+  erro: {
+    fontFamily: fontes.media,
+    color: cores.perigo,
+    textAlign: 'center',
+    marginVertical: espacos.sm,
+  },
 });

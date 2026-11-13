@@ -56,7 +56,10 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
 
   const contratar = useMutation({
     mutationFn: () =>
-      aceitarOrcamento({ orcamentoId: escolhido!.id, dataAgendada: dataAgendada! }, chaveContratacao.current),
+      aceitarOrcamento(
+        { orcamentoId: escolhido!.id, dataAgendada: dataAgendada! },
+        chaveContratacao.current,
+      ),
     onSuccess: () => {
       setEscolhido(null);
       chaveContratacao.current = gerarChaveUnica();
@@ -99,7 +102,12 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
 
   if (pedido.isLoading) return <Carregando />;
   if (pedido.isError || !pedido.data) {
-    return <MensagemErro mensagem={mensagemDeErro(pedido.error)} aoTentarDeNovo={() => void pedido.refetch()} />;
+    return (
+      <MensagemErro
+        mensagem={mensagemDeErro(pedido.error)}
+        aoTentarDeNovo={() => void pedido.refetch()}
+      />
+    );
   }
 
   const p = pedido.data;
@@ -113,7 +121,11 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
       style={estilos.tela}
       contentContainerStyle={estilos.conteudo}
       refreshControl={
-        <RefreshControl refreshing={pedido.isRefetching} onRefresh={atualizarTudo} tintColor={cores.primaria} />
+        <RefreshControl
+          refreshing={pedido.isRefetching}
+          onRefresh={atualizarTudo}
+          tintColor={cores.primaria}
+        />
       }
     >
       <View style={estilos.topo}>
@@ -146,7 +158,9 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                 tom={seloContratacao[contratacao.status].tom}
               />
             </View>
-            <Text style={estilos.meta}>Agendado para {formatarDataHora(contratacao.dataAgendada)}</Text>
+            <Text style={estilos.meta}>
+              Agendado para {formatarDataHora(contratacao.dataAgendada)}
+            </Text>
             {p.prestador && (
               <View style={estilos.contato}>
                 <Ionicons name="person-circle-outline" size={22} color={cores.secundaria} />
@@ -171,13 +185,18 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
           {orcamentos.isLoading && <Subtitulo>Buscando orcamentos...</Subtitulo>}
           {orcamentos.isError && <Subtitulo>{mensagemDeErro(orcamentos.error)}</Subtitulo>}
           {!orcamentos.isLoading && listaOrcamentos.length === 0 && (
-            <Subtitulo>Os prestadores do seu bairro ja foram avisados. Os orcamentos aparecem aqui.</Subtitulo>
+            <Subtitulo>
+              Os prestadores do seu bairro ja foram avisados. Os orcamentos aparecem aqui.
+            </Subtitulo>
           )}
           {listaOrcamentos.map((orcamento) => {
             const selo = seloOrcamento[orcamento.status];
             const acimaDoJusto = orcamento.valor > p.precoMaximo;
             return (
-              <Cartao key={orcamento.id} estilo={escolhido?.id === orcamento.id ? estilos.escolhido : undefined}>
+              <Cartao
+                key={orcamento.id}
+                estilo={escolhido?.id === orcamento.id ? estilos.escolhido : undefined}
+              >
                 <View style={estilos.linha}>
                   <Text style={estilos.prestador}>{orcamento.prestadorNome}</Text>
                   <Selo texto={selo.texto} tom={selo.tom} />
@@ -187,15 +206,27 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                   Prazo: {orcamento.prazoDias} dia(s)
                   {acimaDoJusto ? ' · um pouco acima da faixa justa' : ' · dentro do preco justo'}
                 </Text>
-                {!!orcamento.observacao && <Text style={estilos.observacao}>"{orcamento.observacao}"</Text>}
+                {!!orcamento.observacao && (
+                  <Text style={estilos.observacao}>{`“${orcamento.observacao}”`}</Text>
+                )}
                 {orcamento.status === 'Pendente' && escolhido?.id !== orcamento.id && (
-                  <Botao titulo="Escolher este" aoPressionar={() => escolher(orcamento)} estilo={estilos.botaoCartao} />
+                  <Botao
+                    titulo="Escolher este"
+                    aoPressionar={() => escolher(orcamento)}
+                    estilo={estilos.botaoCartao}
+                  />
                 )}
                 {escolhido?.id === orcamento.id && (
                   <View style={estilos.agendar}>
                     <Text style={estilos.rotulo}>Quando o prestador pode ir?</Text>
-                    <Opcoes<string> opcoes={datas} selecionado={dataAgendada} aoSelecionar={setDataAgendada} />
-                    {contratar.isError && <Text style={estilos.erro}>{mensagemDeErro(contratar.error)}</Text>}
+                    <Opcoes<string>
+                      opcoes={datas}
+                      selecionado={dataAgendada}
+                      aoSelecionar={setDataAgendada}
+                    />
+                    {contratar.isError && (
+                      <Text style={estilos.erro}>{mensagemDeErro(contratar.error)}</Text>
+                    )}
                     <Botao
                       titulo="Confirmar contratacao"
                       desabilitado={!dataAgendada}
@@ -221,7 +252,9 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
           <Titulo>Avalie o prestador</Titulo>
           {avaliado ? (
             <Cartao>
-              <Text style={estilos.obrigado}>Obrigado! Sua avaliacao ajuda seus vizinhos a escolher bem.</Text>
+              <Text style={estilos.obrigado}>
+                Obrigado! Sua avaliacao ajuda seus vizinhos a escolher bem.
+              </Text>
             </Cartao>
           ) : (
             <Cartao>
@@ -234,7 +267,11 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                 maxLength={500}
               />
               {avaliar.isError && <Text style={estilos.erro}>{mensagemDeErro(avaliar.error)}</Text>}
-              <Botao titulo="Enviar avaliacao" carregando={avaliar.isPending} aoPressionar={() => avaliar.mutate()} />
+              <Botao
+                titulo="Enviar avaliacao"
+                carregando={avaliar.isPending}
+                aoPressionar={() => avaliar.mutate()}
+              />
             </Cartao>
           )}
         </>
@@ -266,17 +303,57 @@ const estilos = StyleSheet.create({
   conteudo: { padding: espacos.md, paddingBottom: espacos.xl * 2 },
   topo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   numero: { fontFamily: fontes.seminegrito, fontSize: tamanhos.normal, color: cores.textoSuave },
-  descricao: { fontFamily: fontes.media, fontSize: tamanhos.medio, color: cores.texto, marginTop: espacos.sm },
-  meta: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave, marginVertical: espacos.xs },
-  linha: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: espacos.sm },
-  prestador: { fontFamily: fontes.seminegrito, fontSize: tamanhos.medio, color: cores.texto, flexShrink: 1 },
-  valor: { fontFamily: fontes.negrito, fontSize: tamanhos.grande, color: cores.primariaEscura, marginTop: espacos.xs },
-  observacao: { fontFamily: fontes.regular, fontStyle: 'italic', color: cores.textoSuave, marginTop: espacos.xs },
+  descricao: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.medio,
+    color: cores.texto,
+    marginTop: espacos.sm,
+  },
+  meta: {
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.pequeno,
+    color: cores.textoSuave,
+    marginVertical: espacos.xs,
+  },
+  linha: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: espacos.sm,
+  },
+  prestador: {
+    fontFamily: fontes.seminegrito,
+    fontSize: tamanhos.medio,
+    color: cores.texto,
+    flexShrink: 1,
+  },
+  valor: {
+    fontFamily: fontes.negrito,
+    fontSize: tamanhos.grande,
+    color: cores.primariaEscura,
+    marginTop: espacos.xs,
+  },
+  observacao: {
+    fontFamily: fontes.regular,
+    fontStyle: 'italic',
+    color: cores.textoSuave,
+    marginTop: espacos.xs,
+  },
   escolhido: { borderColor: cores.primaria, borderWidth: 2 },
   botaoCartao: { marginTop: espacos.sm },
   agendar: { marginTop: espacos.md },
-  rotulo: { fontFamily: fontes.media, fontSize: tamanhos.normal, color: cores.texto, marginBottom: espacos.sm },
-  erro: { fontFamily: fontes.media, color: cores.perigo, textAlign: 'center', marginBottom: espacos.sm },
+  rotulo: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.normal,
+    color: cores.texto,
+    marginBottom: espacos.sm,
+  },
+  erro: {
+    fontFamily: fontes.media,
+    color: cores.perigo,
+    textAlign: 'center',
+    marginBottom: espacos.sm,
+  },
   contato: {
     flexDirection: 'row',
     alignItems: 'center',

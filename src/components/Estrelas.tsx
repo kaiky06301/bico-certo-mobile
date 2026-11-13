@@ -11,7 +11,11 @@ interface Props {
 
 export function Estrelas({ nota, aoMudar }: Props) {
   return (
-    <View style={estilos.linha} accessibilityRole="adjustable" accessibilityValue={{ min: 1, max: 5, now: nota }}>
+    <View
+      style={estilos.linha}
+      accessibilityRole="adjustable"
+      accessibilityValue={{ min: 1, max: 5, now: nota }}
+    >
       {[1, 2, 3, 4, 5].map((valor) => (
         <Pressable
           key={valor}
@@ -27,5 +31,10 @@ export function Estrelas({ nota, aoMudar }: Props) {
 }
 
 const estilos = StyleSheet.create({
-  linha: { flexDirection: 'row', gap: espacos.sm, justifyContent: 'center', marginVertical: espacos.md },
+  linha: {
+    flexDirection: 'row',
+    gap: espacos.sm,
+    justifyContent: 'center',
+    marginVertical: espacos.md,
+  },
 });

@@ -14,7 +14,14 @@ interface Props {
   estilo?: ViewStyle;
 }
 
-export function Botao({ titulo, aoPressionar, variante = 'primaria', carregando, desabilitado, estilo }: Props) {
+export function Botao({
+  titulo,
+  aoPressionar,
+  variante = 'primaria',
+  carregando,
+  desabilitado,
+  estilo,
+}: Props) {
   const inativo = desabilitado || carregando;
   const corTexto = variante === 'contorno' ? cores.primaria : cores.branco;
 

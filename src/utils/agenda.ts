@@ -6,8 +6,7 @@ export function opcoesDeAgendamento(agora = new Date()) {
     data.setHours(hora, 0, 0, 0);
     return data;
   };
-  const rotulo = (data: Date, prefixo: string) =>
-    `${prefixo} ${data.getHours()}h`;
+  const rotulo = (data: Date, prefixo: string) => `${prefixo} ${data.getHours()}h`;
 
   return [
     { valor: em(1, 9).toISOString(), rotulo: rotulo(em(1, 9), 'Amanha') },
