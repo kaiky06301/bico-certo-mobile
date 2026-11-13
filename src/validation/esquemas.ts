@@ -1,0 +1,59 @@
+import * as Yup from 'yup';
+
+export const esquemaLogin = Yup.object({
+  email: Yup.string().trim().required('Informe o e-mail').email('E-mail invalido'),
+  senha: Yup.string().required('Informe a senha'),
+});
+
+export const esquemaCadastro = Yup.object({
+  nome: Yup.string().trim().required('Informe seu nome').min(3, 'Nome muito curto'),
+  email: Yup.string().trim().required('Informe o e-mail').email('E-mail invalido'),
+  senha: Yup.string().required('Crie uma senha').min(6, 'A senha precisa ter pelo menos 6 caracteres'),
+  telefone: Yup.string()
+    .trim()
+    .matches(/^[0-9()+\- ]{8,20}$/, { message: 'Telefone invalido', excludeEmptyString: true }),
+  bairro: Yup.string().trim().required('Informe seu bairro'),
+  papel: Yup.mixed<'CLIENTE' | 'PRESTADOR'>().oneOf(['CLIENTE', 'PRESTADOR']).required(),
+  categoriaId: Yup.number().when('papel', {
+    is: 'PRESTADOR',
+    then: (s) => s.required('Escolha o servico que voce faz'),
+    otherwise: (s) => s.notRequired(),
+  }),
+});
+
+export const esquemaPedido = Yup.object({
+  descricao: Yup.string()
+    .trim()
+    .required('Descreva o problema')
+    .min(10, 'Conte um pouco mais (minimo de 10 caracteres)')
+    .max(1000, 'Maximo de 1000 caracteres'),
+});
+
+export const esquemaOrcamento = Yup.object({
+  valor: Yup.number()
+    .typeError('Informe o valor em reais')
+    .required('Informe o valor')
+    .min(1, 'O valor deve ser maior que zero'),
+  prazoDias: Yup.number()
+    .typeError('Informe o prazo em dias')
+    .required('Informe o prazo')
+    .integer('Use dias inteiros')
+    .min(1, 'Minimo de 1 dia')
+    .max(60, 'Maximo de 60 dias'),
+});
+
+/** Valida e devolve um mapa campo -> primeira mensagem de erro (vazio quando esta tudo certo). */
+export async function validar<T extends object>(esquema: Yup.Schema<T>, dados: unknown) {
+  try {
+    await esquema.validate(dados, { abortEarly: false });
+    return {} as Record<string, string>;
+  } catch (erro) {
+    const erros: Record<string, string> = {};
+    if (erro instanceof Yup.ValidationError) {
+      erro.inner.forEach((e) => {
+        if (e.path && !erros[e.path]) erros[e.path] = e.message;
+      });
+    }
+    return erros;
+  }
+}
