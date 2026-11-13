@@ -6,6 +6,7 @@ export interface Orcamento {
   solicitacaoId: number;
   clienteId: number;
   prestadorId: number;
+  prestadorNome: string;
   prestadorEmail: string;
   valor: number;
   prazoDias: number;
