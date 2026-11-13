@@ -160,7 +160,7 @@ export function DetalheServicoScreen({ route }: Props) {
 
       {contratacao ? (
         <>
-          <Titulo>Servico contratado</Titulo>
+          <Titulo>Serviço contratado</Titulo>
           <Cartao>
             <View style={estilos.linha}>
               <Text style={estilos.valor}>{formatarMoeda(contratacao.valorAcordado)}</Text>
@@ -174,7 +174,7 @@ export function DetalheServicoScreen({ route }: Props) {
             </Text>
             {contratacao.status === 'Agendada' && (
               <Botao
-                titulo="Iniciar servico"
+                titulo="Iniciar serviço"
                 carregando={iniciar.isPending}
                 aoPressionar={() => iniciar.mutate()}
                 estilo={estilos.botao}
@@ -182,7 +182,7 @@ export function DetalheServicoScreen({ route }: Props) {
             )}
             {contratacao.status === 'EmAndamento' && (
               <Botao
-                titulo="Concluir servico"
+                titulo="Concluir serviço"
                 variante="secundaria"
                 carregando={concluir.isPending}
                 aoPressionar={() => concluir.mutate()}
@@ -191,7 +191,7 @@ export function DetalheServicoScreen({ route }: Props) {
             )}
             {contratacao.status === 'Concluida' && (
               <Text style={estilos.sucesso}>
-                Servico concluido. O cliente foi convidado a avaliar voce.
+                Serviço concluído. O cliente foi convidado a avaliar você.
               </Text>
             )}
             {(iniciar.isError || concluir.isError) && (
@@ -201,7 +201,7 @@ export function DetalheServicoScreen({ route }: Props) {
         </>
       ) : meuOrcamento ? (
         <>
-          <Titulo>Seu orcamento</Titulo>
+          <Titulo>Seu orçamento</Titulo>
           <Cartao>
             <View style={estilos.linha}>
               <Text style={estilos.valor}>{formatarMoeda(meuOrcamento.valor)}</Text>
@@ -214,14 +214,14 @@ export function DetalheServicoScreen({ route }: Props) {
             <Text style={estilos.meta}>
               {meuOrcamento.status === 'Recusado'
                 ? 'O cliente escolheu outro prestador desta vez.'
-                : 'Aguardando o cliente escolher. Voce sera avisado.'}
+                : 'Aguardando o cliente escolher. Você será avisado.'}
             </Text>
           </Cartao>
         </>
       ) : p.status === 'ABERTA' ? (
         <>
-          <Titulo>Enviar orcamento</Titulo>
-          <Subtitulo>{`Preco justo para este servico: ${formatarFaixa(p.precoMinimo, p.precoMaximo)}.`}</Subtitulo>
+          <Titulo>Enviar orçamento</Titulo>
+          <Subtitulo>{`Preço justo para este serviço: ${formatarFaixa(p.precoMinimo, p.precoMaximo)}.`}</Subtitulo>
           <Cartao>
             <CampoTexto
               rotulo="Valor (R$)"
@@ -248,7 +248,7 @@ export function DetalheServicoScreen({ route }: Props) {
             />
             {enviar.isError && <Text style={estilos.erro}>{mensagemDeErro(enviar.error)}</Text>}
             <Botao
-              titulo="Enviar orcamento"
+              titulo="Enviar orçamento"
               carregando={enviar.isPending}
               aoPressionar={aoEnviar}
             />

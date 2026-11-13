@@ -63,7 +63,7 @@ export function AgendaScreen({ navigation }: Props) {
         <EstadoVazio
           icone="calendar-clear-outline"
           titulo="Agenda vazia"
-          texto="Quando um cliente aceitar seu orcamento, o servico aparece aqui com a data combinada."
+          texto="Quando um cliente aceitar seu orçamento, o serviço aparece aqui com a data combinada."
         />
       }
     />

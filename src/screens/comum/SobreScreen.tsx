@@ -28,13 +28,13 @@ export function SobreScreen() {
       />
       <Text style={estilos.nome}>Bico Certo</Text>
       <Text style={estilos.texto}>
-        Conecta moradores a prestadores de servico do proprio bairro, com triagem inteligente do
-        problema e preco justo. Global Solution 2026/2 - CitizenTech (FIAP).
+        Conecta moradores a prestadores de serviço do próprio bairro, com triagem inteligente do
+        problema e preço justo. Global Solution 2026/2 - CitizenTech (FIAP).
       </Text>
 
       <Cartao>
-        <Info rotulo="Versao" valor={versao} />
-        <Info rotulo="Commit de referencia" valor={commit} destaque />
+        <Info rotulo="Versão" valor={versao} />
+        <Info rotulo="Commit de referência" valor={commit} destaque />
         <Info rotulo="API Java" valor={JAVA_API_URL} />
         <Info rotulo="API .NET" valor={NET_API_URL} />
       </Cartao>

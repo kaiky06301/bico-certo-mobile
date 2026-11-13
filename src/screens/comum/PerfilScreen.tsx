@@ -11,7 +11,7 @@ import { espacos, fontes, tamanhos } from '../../theme/tipografia';
 
 const nomesDosPapeis = {
   CLIENTE: 'Cliente',
-  PRESTADOR: 'Prestador de servico',
+  PRESTADOR: 'Prestador de serviço',
   ADMIN: 'Administrador',
 };
 
@@ -20,7 +20,7 @@ export function PerfilScreen() {
   const navigation = useNavigation<{ navigate: (rota: string) => void }>();
 
   function confirmarSaida() {
-    Alert.alert('Sair da conta?', 'Voce precisara entrar de novo para usar o app.', [
+    Alert.alert('Sair da conta?', 'Você precisará entrar de novo para usar o app.', [
       { text: 'Ficar', style: 'cancel' },
       { text: 'Sair', style: 'destructive', onPress: () => void sair() },
     ]);
@@ -40,7 +40,7 @@ export function PerfilScreen() {
 
       <Cartao estilo={estilos.cartao}>
         <Linha icone="mail-outline" texto={usuario.email} />
-        <Linha icone="call-outline" texto={usuario.telefone ?? 'Telefone nao informado'} />
+        <Linha icone="call-outline" texto={usuario.telefone ?? 'Telefone não informado'} />
         <Linha icone="location-outline" texto={usuario.bairro} />
       </Cartao>
 

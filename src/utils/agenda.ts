@@ -9,8 +9,8 @@ export function opcoesDeAgendamento(agora = new Date()) {
   const rotulo = (data: Date, prefixo: string) => `${prefixo} ${data.getHours()}h`;
 
   return [
-    { valor: em(1, 9).toISOString(), rotulo: rotulo(em(1, 9), 'Amanha') },
-    { valor: em(1, 14).toISOString(), rotulo: rotulo(em(1, 14), 'Amanha') },
+    { valor: em(1, 9).toISOString(), rotulo: rotulo(em(1, 9), 'Amanhã') },
+    { valor: em(1, 14).toISOString(), rotulo: rotulo(em(1, 14), 'Amanhã') },
     { valor: em(2, 9).toISOString(), rotulo: rotulo(em(2, 9), 'Em 2 dias,') },
     { valor: em(3, 14).toISOString(), rotulo: rotulo(em(3, 14), 'Em 3 dias,') },
   ];

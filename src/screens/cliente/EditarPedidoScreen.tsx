@@ -59,11 +59,11 @@ function FormularioEdicao({ pedido, aoSalvar }: { pedido: Solicitacao; aoSalvar:
   return (
     <TelaFormulario>
       <Text style={estilos.aviso}>
-        Ao salvar, o problema e analisado de novo: a categoria, a urgencia e o preco justo podem
+        Ao salvar, o problema é analisado de novo: a categoria, a urgência e o preço justo podem
         mudar.
       </Text>
       <CampoTexto
-        rotulo="Descricao do problema"
+        rotulo="Descrição do problema"
         multiline
         value={descricao}
         onChangeText={setDescricao}
@@ -72,7 +72,7 @@ function FormularioEdicao({ pedido, aoSalvar }: { pedido: Solicitacao; aoSalvar:
       />
       <CampoTexto rotulo="Bairro" value={bairro} onChangeText={setBairro} />
       {salvar.isError && <Text style={estilos.erro}>{mensagemDeErro(salvar.error)}</Text>}
-      <Botao titulo="Salvar alteracoes" aoPressionar={aoConfirmar} carregando={salvar.isPending} />
+      <Botao titulo="Salvar alterações" aoPressionar={aoConfirmar} carregando={salvar.isPending} />
     </TelaFormulario>
   );
 }

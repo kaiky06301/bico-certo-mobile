@@ -63,23 +63,23 @@ export function NovoPedidoScreen({ navigation }: Props) {
 
   return (
     <TelaFormulario>
-      <Text style={estilos.ola}>Ola, {usuario?.nome.split(' ')[0]}!</Text>
+      <Text style={estilos.ola}>Olá, {usuario?.nome.split(' ')[0]}!</Text>
       <Text style={estilos.titulo}>O que precisa de conserto?</Text>
       <Text style={estilos.subtitulo}>
-        Conte com suas palavras. A gente identifica o tipo de servico, a urgencia e quanto e justo
+        Conte com suas palavras. A gente identifica o tipo de serviço, a urgência e quanto é justo
         pagar.
       </Text>
 
       <CampoTexto
         rotulo="Descreva o problema"
         multiline
-        placeholder="Ex.: a tomada da cozinha esta soltando faisca quando ligo a geladeira"
+        placeholder="Ex.: a tomada da cozinha está soltando faísca quando ligo a geladeira"
         value={descricao}
         onChangeText={aoEditarDescricao}
         erro={erroCampo}
         maxLength={1000}
       />
-      <CampoTexto rotulo="Bairro do servico" value={bairro} onChangeText={setBairro} />
+      <CampoTexto rotulo="Bairro do serviço" value={bairro} onChangeText={setBairro} />
 
       {!triagem && (
         <Botao
@@ -116,7 +116,7 @@ export function NovoPedidoScreen({ navigation }: Props) {
             carregando={confirmar.isPending}
           />
           <Botao
-            titulo="Mudar a descricao"
+            titulo="Mudar a descrição"
             variante="contorno"
             aoPressionar={() => setTriagem(null)}
             estilo={estilos.botaoSecundario}

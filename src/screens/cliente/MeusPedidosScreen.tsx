@@ -46,7 +46,7 @@ export function MeusPedidosScreen({ navigation }: Props) {
         <EstadoVazio
           icone="construct-outline"
           titulo="Nenhum pedido ainda"
-          texto="Descreva um problema na aba Novo pedido e receba orcamentos de prestadores do seu bairro."
+          texto="Descreva um problema na aba Novo pedido e receba orçamentos de prestadores do seu bairro."
         />
       }
     />

@@ -64,7 +64,7 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
       setEscolhido(null);
       chaveContratacao.current = gerarChaveUnica();
       atualizarTudo();
-      Alert.alert('Servico contratado!', 'O prestador ja pode ver o agendamento.');
+      Alert.alert('Serviço contratado!', 'O prestador já pode ver o agendamento.');
     },
   });
 
@@ -79,7 +79,7 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
       atualizarTudo();
       navigation.goBack();
     },
-    onError: (erro) => Alert.alert('Nao foi possivel cancelar', mensagemDeErro(erro)),
+    onError: (erro) => Alert.alert('Não foi possível cancelar', mensagemDeErro(erro)),
   });
 
   const avaliar = useMutation({
@@ -149,7 +149,7 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
 
       {contratacao && (
         <>
-          <Titulo>Servico contratado</Titulo>
+          <Titulo>Serviço contratado</Titulo>
           <Cartao>
             <View style={estilos.linha}>
               <Text style={estilos.valor}>{formatarMoeda(contratacao.valorAcordado)}</Text>
@@ -181,12 +181,12 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
 
       {p.status === 'ABERTA' && !contratacao && (
         <>
-          <Titulo>Orcamentos recebidos</Titulo>
-          {orcamentos.isLoading && <Subtitulo>Buscando orcamentos...</Subtitulo>}
+          <Titulo>Orçamentos recebidos</Titulo>
+          {orcamentos.isLoading && <Subtitulo>Buscando orçamentos...</Subtitulo>}
           {orcamentos.isError && <Subtitulo>{mensagemDeErro(orcamentos.error)}</Subtitulo>}
           {!orcamentos.isLoading && listaOrcamentos.length === 0 && (
             <Subtitulo>
-              Os prestadores do seu bairro ja foram avisados. Os orcamentos aparecem aqui.
+              Os prestadores do seu bairro já foram avisados. Os orçamentos aparecem aqui.
             </Subtitulo>
           )}
           {listaOrcamentos.map((orcamento) => {
@@ -204,7 +204,7 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                 <Text style={estilos.valor}>{formatarMoeda(orcamento.valor)}</Text>
                 <Text style={estilos.meta}>
                   Prazo: {orcamento.prazoDias} dia(s)
-                  {acimaDoJusto ? ' · um pouco acima da faixa justa' : ' · dentro do preco justo'}
+                  {acimaDoJusto ? ' · um pouco acima da faixa justa' : ' · dentro do preço justo'}
                 </Text>
                 {!!orcamento.observacao && (
                   <Text style={estilos.observacao}>{`“${orcamento.observacao}”`}</Text>
@@ -228,7 +228,7 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                       <Text style={estilos.erro}>{mensagemDeErro(contratar.error)}</Text>
                     )}
                     <Botao
-                      titulo="Confirmar contratacao"
+                      titulo="Confirmar contratação"
                       desabilitado={!dataAgendada}
                       carregando={contratar.isPending}
                       aoPressionar={() => contratar.mutate()}
@@ -253,14 +253,14 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
           {avaliado ? (
             <Cartao>
               <Text style={estilos.obrigado}>
-                Obrigado! Sua avaliacao ajuda seus vizinhos a escolher bem.
+                Obrigado! Sua avaliação ajuda seus vizinhos a escolher bem.
               </Text>
             </Cartao>
           ) : (
             <Cartao>
               <Estrelas nota={nota} aoMudar={setNota} />
               <CampoTexto
-                rotulo="Comentario (opcional)"
+                rotulo="Comentário (opcional)"
                 multiline
                 value={comentario}
                 onChangeText={setComentario}
@@ -268,7 +268,7 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
               />
               {avaliar.isError && <Text style={estilos.erro}>{mensagemDeErro(avaliar.error)}</Text>}
               <Botao
-                titulo="Enviar avaliacao"
+                titulo="Enviar avaliação"
                 carregando={avaliar.isPending}
                 aoPressionar={() => avaliar.mutate()}
               />

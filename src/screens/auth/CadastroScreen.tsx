@@ -59,12 +59,12 @@ export function CadastroScreen() {
     <TelaFormulario>
       <Text style={estilos.titulo}>Crie sua conta</Text>
       <Text style={estilos.subtitulo}>
-        Voce quer contratar um servico ou oferecer o seu trabalho?
+        Você quer contratar um serviço ou oferecer o seu trabalho?
       </Text>
 
       <Opcoes<TipoConta>
         opcoes={[
-          { valor: 'CLIENTE', rotulo: 'Preciso de um servico' },
+          { valor: 'CLIENTE', rotulo: 'Preciso de um serviço' },
           { valor: 'PRESTADOR', rotulo: 'Sou prestador' },
         ]}
         selecionado={papel}
@@ -83,7 +83,7 @@ export function CadastroScreen() {
       <CampoTexto
         rotulo="Senha"
         secureTextEntry
-        placeholder="Minimo de 6 caracteres"
+        placeholder="Mínimo de 6 caracteres"
         value={senha}
         onChangeText={setSenha}
         erro={erros.senha}
@@ -106,11 +106,11 @@ export function CadastroScreen() {
 
       {papel === 'PRESTADOR' && (
         <>
-          <Text style={estilos.rotulo}>Qual servico voce faz?</Text>
-          {categorias.isLoading && <Text style={estilos.ajuda}>Carregando servicos...</Text>}
+          <Text style={estilos.rotulo}>Qual serviço você faz?</Text>
+          {categorias.isLoading && <Text style={estilos.ajuda}>Carregando serviços...</Text>}
           {categorias.isError && (
             <Text style={estilos.erroCampo}>
-              Nao foi possivel carregar os servicos. Verifique a conexao.
+              Não foi possível carregar os serviços. Verifique a conexão.
             </Text>
           )}
           <Opcoes<number>

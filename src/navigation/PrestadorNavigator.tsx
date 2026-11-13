@@ -73,7 +73,7 @@ export function PrestadorNavigator() {
       <Pilha.Screen
         name="DetalheServico"
         component={DetalheServicoScreen}
-        options={{ title: 'Detalhe do servico' }}
+        options={{ title: 'Detalhe do serviço' }}
       />
       <Pilha.Screen name="Sobre" component={SobreScreen} options={{ title: 'Sobre o app' }} />
     </Pilha.Navigator>

@@ -4,7 +4,7 @@ import { isAxiosError } from 'axios';
 export function mensagemDeErro(erro: unknown): string {
   if (isAxiosError(erro)) {
     if (!erro.response) {
-      return 'Sem conexao com o servidor. Verifique sua internet e tente de novo.';
+      return 'Sem conexão com o servidor. Verifique sua internet e tente de novo.';
     }
     const dados = erro.response.data as Record<string, unknown> | undefined;
     // API Java: { mensagem, campos: [{campo, mensagem}] } | API .NET (ProblemDetails): { detail, errors }

@@ -48,17 +48,20 @@ export function LoginScreen({ navigation }: Props) {
           accessibilityLabel="Logo do Bico Certo"
         />
         <Text style={estilos.marca}>Bico Certo</Text>
-        <Text style={estilos.slogan}>O servico certo, no seu bairro, pelo preco justo.</Text>
+        <Text style={estilos.slogan}>O serviço certo, no seu bairro, pelo preço justo.</Text>
       </View>
 
       <CampoTexto
         rotulo="E-mail"
-        placeholder="voce@email.com"
+        placeholder="seuemail@exemplo.com"
         keyboardType="email-address"
         autoCapitalize="none"
         autoComplete="email"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(texto) => {
+          setEmail(texto);
+          setErros((atual) => ({ ...atual, email: '' }));
+        }}
         erro={erros.email}
       />
       <CampoTexto
@@ -66,7 +69,10 @@ export function LoginScreen({ navigation }: Props) {
         placeholder="Sua senha"
         secureTextEntry
         value={senha}
-        onChangeText={setSenha}
+        onChangeText={(texto) => {
+          setSenha(texto);
+          setErros((atual) => ({ ...atual, senha: '' }));
+        }}
         erro={erros.senha}
         onSubmitEditing={aoEntrar}
       />
@@ -81,7 +87,7 @@ export function LoginScreen({ navigation }: Props) {
         style={estilos.link}
       >
         <Text style={estilos.linkTexto}>
-          Ainda nao tem conta? <Text style={estilos.linkDestaque}>Criar conta</Text>
+          Ainda não tem conta? <Text style={estilos.linkDestaque}>Criar conta</Text>
         </Text>
       </Pressable>
     </TelaFormulario>

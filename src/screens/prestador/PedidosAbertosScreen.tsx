@@ -21,7 +21,7 @@ export function PedidosAbertosScreen({ navigation }: Props) {
   const { usuario } = useAuth();
   const { data, isLoading, isError, error, refetch, isRefetching } = useSolicitacoesAbertas();
 
-  if (isLoading) return <Carregando texto="Buscando pedidos da sua area..." />;
+  if (isLoading) return <Carregando texto="Buscando pedidos da sua área..." />;
   if (isError)
     return <MensagemErro mensagem={mensagemDeErro(error)} aoTentarDeNovo={() => void refetch()} />;
 
@@ -33,8 +33,8 @@ export function PedidosAbertosScreen({ navigation }: Props) {
       keyExtractor={(pedido) => String(pedido.id)}
       ListHeaderComponent={
         <Text style={estilos.cabecalho}>
-          Ola, {usuario?.nome.split(' ')[0]}! Estes pedidos sao da sua area e estao esperando
-          orcamento.
+          Olá, {usuario?.nome.split(' ')[0]}! Estes pedidos são da sua área e estão esperando
+          orçamento.
         </Text>
       }
       renderItem={({ item }) => (
@@ -54,7 +54,7 @@ export function PedidosAbertosScreen({ navigation }: Props) {
         <EstadoVazio
           icone="notifications-outline"
           titulo="Nenhum pedido aberto agora"
-          texto="Quando um morador pedir um servico da sua area, voce recebe um aviso e ele aparece aqui."
+          texto="Quando um morador pedir um serviço da sua área, você recebe um aviso e ele aparece aqui."
         />
       }
     />

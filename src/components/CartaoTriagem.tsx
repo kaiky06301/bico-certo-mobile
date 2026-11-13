@@ -28,7 +28,7 @@ export function CartaoTriagem(props: Props) {
       <View style={estilos.cabecalho}>
         <Ionicons name="sparkles" size={18} color={cores.primaria} />
         <Text style={estilos.cabecalhoTexto}>
-          {props.origem === 'IA' ? 'Analise do Bico Certo' : 'Analise automatica'}
+          {props.origem === 'IA' ? 'Análise do Bico Certo' : 'Análise automática'}
         </Text>
       </View>
 
@@ -37,7 +37,7 @@ export function CartaoTriagem(props: Props) {
       <Selo texto={urgencia.texto} tom={urgencia.tom} />
 
       <View style={estilos.preco}>
-        <Text style={estilos.precoRotulo}>Preco justo para esse servico</Text>
+        <Text style={estilos.precoRotulo}>Preço justo para esse serviço</Text>
         <Text style={estilos.precoValor}>
           {formatarFaixa(props.precoMinimo, props.precoMaximo)}
         </Text>
@@ -51,8 +51,8 @@ export function CartaoTriagem(props: Props) {
       {props.prestadoresDisponiveis !== undefined && (
         <Text style={estilos.prestadores}>
           {props.prestadoresDisponiveis > 0
-            ? `${props.prestadoresDisponiveis} prestador(es) dessa area serao avisados.`
-            : 'Ainda nao ha prestadores dessa area cadastrados, mas seu pedido fica registrado.'}
+            ? `${props.prestadoresDisponiveis} prestador(es) dessa área serão avisados.`
+            : 'Ainda não há prestadores dessa área cadastrados, mas seu pedido fica registrado.'}
         </Text>
       )}
     </Cartao>
