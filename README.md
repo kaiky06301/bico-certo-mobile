@@ -146,6 +146,8 @@ npm run format      # Prettier
 
 ## Integrantes
 
+**Grupo:** Bico Certo Labs
+
 | Nome | RM | Turma |
 |---|---|---|
 | Erick Bernardes Bradaschia | RM565733 | 2TDSR |
