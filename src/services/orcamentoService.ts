@@ -3,6 +3,8 @@ import {
   ContratacaoRequest,
   Orcamento,
   OrcamentoRequest,
+  Proposta,
+  PropostaRequest,
   StatusContratacao,
 } from '../models/contratacao';
 import { Pagina } from '../models/pagina';
@@ -48,5 +50,39 @@ export async function alterarStatusContratacao(
   status: StatusContratacao,
 ): Promise<Contratacao> {
   const { data } = await apiNet.patch<Contratacao>(`/api/contratacoes/${id}/status`, { status });
+  return data;
+}
+
+// ---------- negociação de valor ----------
+
+export async function listarPropostas(orcamentoId: number): Promise<Proposta[]> {
+  const { data } = await apiNet.get<Proposta[]>(`/api/orcamentos/${orcamentoId}/propostas`);
+  return data;
+}
+
+/** Cliente ou prestador propõe outro valor; substitui a proposta que estava esperando resposta. */
+export async function enviarProposta(
+  orcamentoId: number,
+  dados: PropostaRequest,
+  chave: string,
+): Promise<Proposta> {
+  const { data } = await apiNet.post<Proposta>(
+    `/api/orcamentos/${orcamentoId}/propostas`,
+    dados,
+    comChave(chave),
+  );
+  return data;
+}
+
+/** A outra parte aceita (o valor do orçamento muda) ou recusa (continua o valor atual). */
+export async function responderProposta(
+  orcamentoId: number,
+  propostaId: number,
+  aceita: boolean,
+): Promise<Proposta> {
+  const { data } = await apiNet.patch<Proposta>(
+    `/api/orcamentos/${orcamentoId}/propostas/${propostaId}`,
+    { aceita },
+  );
   return data;
 }

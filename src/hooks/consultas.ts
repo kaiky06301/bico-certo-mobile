@@ -2,7 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 
 import { listarCategorias } from '../services/categoriaService';
 import { contarNaoLidas, listarNotificacoes } from '../services/notificacaoService';
-import { listarContratacoes, listarOrcamentos } from '../services/orcamentoService';
+import {
+  listarContratacoes,
+  listarOrcamentos,
+  listarPropostas,
+} from '../services/orcamentoService';
 import {
   buscarSolicitacao,
   listarMeusAtendimentos,
@@ -18,6 +22,7 @@ export const chaves = {
   atendimentos: ['solicitacoes', 'atendimentos'] as const,
   solicitacao: (id: number) => ['solicitacoes', id] as const,
   orcamentos: (solicitacaoId?: number) => ['orcamentos', solicitacaoId ?? 'todos'] as const,
+  propostas: (orcamentoId: number) => ['orcamentos', 'propostas', orcamentoId] as const,
   contratacoes: ['contratacoes'] as const,
   notificacoes: ['notificacoes'] as const,
   naoLidas: ['notificacoes', 'naoLidas'] as const,
@@ -54,6 +59,15 @@ export function useOrcamentos(solicitacaoId?: number) {
   return useQuery({
     queryKey: chaves.orcamentos(solicitacaoId),
     queryFn: () => listarOrcamentos(solicitacaoId),
+  });
+}
+
+/** Histórico da negociação: só busca quando a pessoa abre o histórico. */
+export function usePropostas(orcamentoId: number, habilitado: boolean) {
+  return useQuery({
+    queryKey: chaves.propostas(orcamentoId),
+    queryFn: () => listarPropostas(orcamentoId),
+    enabled: habilitado,
   });
 }
 

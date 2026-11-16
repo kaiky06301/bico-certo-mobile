@@ -9,6 +9,7 @@ import { CampoTexto } from '../../components/CampoTexto';
 import { Cartao } from '../../components/Cartao';
 import { CartaoTriagem } from '../../components/CartaoTriagem';
 import { Carregando, MensagemErro } from '../../components/Estados';
+import { Negociacao } from '../../components/Negociacao';
 import { Selo } from '../../components/Selo';
 import { seloContratacao, seloOrcamento, seloStatusPedido } from '../../components/selos';
 import { Subtitulo, Titulo } from '../../components/Titulo';
@@ -216,6 +217,9 @@ export function DetalheServicoScreen({ route }: Props) {
                 ? 'O cliente escolheu outro prestador desta vez.'
                 : 'Aguardando o cliente escolher. Você será avisado.'}
             </Text>
+            {meuOrcamento.status === 'Pendente' && (
+              <Negociacao orcamento={meuOrcamento} eu="Prestador" precoMaximo={p.precoMaximo} />
+            )}
           </Cartao>
         </>
       ) : p.status === 'ABERTA' ? (
@@ -239,7 +243,7 @@ export function DetalheServicoScreen({ route }: Props) {
               erro={erros.prazoDias}
             />
             <CampoTexto
-              rotulo="Observacao (opcional)"
+              rotulo="Observação (opcional)"
               multiline
               placeholder="Ex.: levo todo o material"
               value={observacao}

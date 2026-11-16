@@ -10,6 +10,7 @@ import { Cartao } from '../../components/Cartao';
 import { CartaoTriagem } from '../../components/CartaoTriagem';
 import { Carregando, MensagemErro } from '../../components/Estados';
 import { Estrelas } from '../../components/Estrelas';
+import { Negociacao } from '../../components/Negociacao';
 import { Opcoes } from '../../components/Opcoes';
 import { Selo } from '../../components/Selo';
 import { seloContratacao, seloOrcamento, seloStatusPedido } from '../../components/selos';
@@ -210,8 +211,11 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                   <Text style={estilos.observacao}>{`“${orcamento.observacao}”`}</Text>
                 )}
                 {orcamento.status === 'Pendente' && escolhido?.id !== orcamento.id && (
+                  <Negociacao orcamento={orcamento} eu="Cliente" precoMaximo={p.precoMaximo} />
+                )}
+                {orcamento.status === 'Pendente' && escolhido?.id !== orcamento.id && (
                   <Botao
-                    titulo="Escolher este"
+                    titulo="Contratar por este valor"
                     aoPressionar={() => escolher(orcamento)}
                     estilo={estilos.botaoCartao}
                   />

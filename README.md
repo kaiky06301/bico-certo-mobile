@@ -20,7 +20,8 @@ No **Bico Certo**:
 1. O morador descreve o problema com as próprias palavras.
 2. O app mostra o que a **análise do Bico Certo** entendeu: tipo de serviço, urgência, **faixa de preço justo** e uma dica de segurança para seguir enquanto espera.
 3. Os prestadores daquela área recebem um aviso e enviam **orçamentos**.
-4. O morador escolhe um orçamento, agenda a data e, no fim, **avalia** o prestador.
+4. Morador e prestador podem **negociar o valor**: qualquer um propõe outro preço com um comentário, e o outro aceita, recusa ou faz uma contraproposta. Se ninguém aceitar, vale o valor atual, e nunca acima do preço justo.
+5. O morador escolhe um orçamento, agenda a data e, no fim, **avalia** o prestador.
 
 ---
 
@@ -32,10 +33,10 @@ No **Bico Certo**:
 | 2 | **Cadastro** | público | Cria conta de cliente ou de prestador (com o serviço que oferece) |
 | 3 | **Novo pedido** | cliente | Descreve o problema → **análise com IA** (prévia) → confirma o pedido |
 | 4 | **Meus pedidos** | cliente | Lista com status, urgência e preço justo (puxar para atualizar) |
-| 5 | **Detalhe do pedido** | cliente | Orçamentos recebidos, contratação com data, cancelar e avaliar com estrelas |
+| 5 | **Detalhe do pedido** | cliente | Orçamentos recebidos, **negociação de valor** (propor, aceitar, recusar, contrapropor e histórico), contratação com data, cancelar e avaliar com estrelas |
 | 6 | **Editar pedido** | cliente | Corrige a descrição; a análise é refeita |
 | 7 | **Pedidos abertos** | prestador | Pedidos da sua área esperando orçamento |
-| 8 | **Detalhe do serviço** | prestador | Envia orçamento, inicia e conclui o serviço |
+| 8 | **Detalhe do serviço** | prestador | Envia orçamento, **negocia o valor** com o cliente, inicia e conclui o serviço |
 | 9 | **Agenda** | prestador | Serviços contratados em ordem de data |
 | 10 | **Avisos** | ambos | Notificações geradas pela API (com selo de não lidas na aba) |
 | 11 | **Perfil** | ambos | Dados do usuário e logout |
@@ -89,6 +90,7 @@ flowchart LR
 - **Axios com interceptadores:** o token entra em todas as requisições e o 401 encerra a sessão num único lugar.
 - **React Query:** cache, recarregamento e estados de carregando e erro sem repetir código em cada tela.
 - **Idempotency-Key:** ao aceitar um orçamento ou enviar uma proposta, o app gera uma chave única e a reutiliza se o usuário tocar duas vezes ou a internet falhar. Assim a API .NET **não duplica a contratação**.
+- **Negociação reaproveitada:** o componente `Negociacao` é o mesmo nas telas do cliente e do prestador; muda só quem está do outro lado.
 - **Mesmo login nas duas APIs:** o JWT emitido pela API Java também é aceito pela API .NET.
 
 ---

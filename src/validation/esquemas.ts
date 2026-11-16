@@ -44,6 +44,14 @@ export const esquemaOrcamento = Yup.object({
     .max(60, 'Máximo de 60 dias'),
 });
 
+export const esquemaProposta = Yup.object({
+  valor: Yup.number()
+    .typeError('Informe o valor em reais')
+    .required('Informe o valor')
+    .min(1, 'O valor deve ser maior que zero'),
+  comentario: Yup.string().trim().max(300, 'Máximo de 300 caracteres'),
+});
+
 /** Valida e devolve um mapa campo -> primeira mensagem de erro (vazio quando esta tudo certo). */
 export async function validar<T extends object>(esquema: Yup.Schema<T>, dados: unknown) {
   try {

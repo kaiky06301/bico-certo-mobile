@@ -8,12 +8,39 @@ export interface Orcamento {
   prestadorId: number;
   prestadorNome: string;
   prestadorEmail: string;
+  /** Valor que vale agora (muda quando uma proposta da negociação é aceita). */
   valor: number;
+  /** Valor que o prestador enviou no orçamento, antes da negociação. */
+  valorInicial: number;
   prazoDias: number;
   observacao: string | null;
   status: StatusOrcamento;
   criadoEm: string;
   atualizadoEm: string;
+  /** Proposta da negociação esperando resposta (null quando não há). */
+  propostaPendente: Proposta | null;
+}
+
+export type AutorProposta = 'Cliente' | 'Prestador';
+export type StatusProposta = 'Pendente' | 'Aceita' | 'Recusada' | 'Substituida';
+
+/** Uma rodada da negociação de valor entre cliente e prestador. */
+export interface Proposta {
+  id: number;
+  orcamentoId: number;
+  autor: AutorProposta;
+  autorId: number;
+  autorNome: string;
+  valor: number;
+  comentario: string | null;
+  status: StatusProposta;
+  criadaEm: string;
+  respondidaEm: string | null;
+}
+
+export interface PropostaRequest {
+  valor: number;
+  comentario?: string;
 }
 
 export interface OrcamentoRequest {
