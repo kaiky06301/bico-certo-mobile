@@ -41,7 +41,6 @@ function Formulario({ conta }: { conta: Usuario }) {
   const [nome, setNome] = useState(conta.nome);
   const [telefone, setTelefone] = useState(conta.telefone ?? '');
   const [bairro, setBairro] = useState(conta.bairro);
-  const [endereco, setEndereco] = useState(conta.endereco ?? '');
   const [erros, setErros] = useState<Record<string, string>>({});
 
   const salvar = useMutation({
@@ -50,7 +49,6 @@ function Formulario({ conta }: { conta: Usuario }) {
         nome: nome.trim(),
         telefone: telefone.trim() || undefined,
         bairro: bairro.trim(),
-        endereco: endereco.trim() || undefined,
       }),
     onSuccess: async (usuario) => {
       await atualizarUsuario(usuario);
@@ -61,7 +59,7 @@ function Formulario({ conta }: { conta: Usuario }) {
   });
 
   async function aoSalvar() {
-    const encontrados = await validar(esquemaDadosPessoais, { nome, telefone, bairro, endereco });
+    const encontrados = await validar(esquemaDadosPessoais, { nome, telefone, bairro });
     setErros(encontrados);
     if (!Object.keys(encontrados).length) salvar.mutate();
   }
@@ -79,16 +77,8 @@ function Formulario({ conta }: { conta: Usuario }) {
         erro={erros.telefone}
       />
       <CampoTexto rotulo="Bairro" value={bairro} onChangeText={setBairro} erro={erros.bairro} />
-      <CampoTexto
-        rotulo="Endereço principal (opcional)"
-        placeholder="Rua, número e complemento"
-        value={endereco}
-        onChangeText={setEndereco}
-        erro={erros.endereco}
-        maxLength={200}
-      />
       <Text style={estilos.dica}>
-        O endereço fica só no seu perfil e não aparece para outros usuários.
+        Para pedir serviços em outros lugares, cadastre em Perfil → Meus endereços.
       </Text>
       {salvar.isError && <Text style={estilos.erro}>{mensagemDeErro(salvar.error)}</Text>}
       <Botao titulo="Salvar" carregando={salvar.isPending} aoPressionar={aoSalvar} />

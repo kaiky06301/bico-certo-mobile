@@ -67,8 +67,14 @@ export function PerfilScreen() {
         <ItemMenu
           icone="person-outline"
           titulo="Dados pessoais"
-          descricao="Nome, telefone, bairro e endereço"
+          descricao="Nome, telefone e bairro"
           aoPressionar={() => navigation.navigate('DadosPessoais')}
+        />
+        <ItemMenu
+          icone="location-outline"
+          titulo="Meus endereços"
+          descricao="Casa, trabalho, casa dos pais..."
+          aoPressionar={() => navigation.navigate('MeusEnderecos')}
         />
         <ItemMenu
           icone="lock-closed-outline"

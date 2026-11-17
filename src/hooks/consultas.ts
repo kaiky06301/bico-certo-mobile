@@ -5,6 +5,7 @@ import {
   buscarConta,
   buscarMeuPerfilPrestador,
   buscarPerfilPrestadorPorUsuario,
+  listarEnderecos,
   listarAvaliacoesDoPrestador,
   listarMinhasAvaliacoes,
 } from '../services/contaService';
@@ -39,6 +40,7 @@ export const chaves = {
   perfilPrestador: (usuarioId: number) => ['prestadores', 'usuario', usuarioId] as const,
   avaliacoesPrestador: (prestadorId: number) => ['prestadores', prestadorId, 'avaliacoes'] as const,
   preferencias: ['preferencias'] as const,
+  enderecos: ['conta', 'enderecos'] as const,
   naoLidas: ['notificacoes', 'naoLidas'] as const,
 };
 
@@ -107,6 +109,10 @@ export function useNaoLidas() {
     refetchInterval: ligadas ? 30000 : false,
     enabled: ligadas,
   });
+}
+
+export function useEnderecos() {
+  return useQuery({ queryKey: chaves.enderecos, queryFn: listarEnderecos });
 }
 
 export function useConta() {

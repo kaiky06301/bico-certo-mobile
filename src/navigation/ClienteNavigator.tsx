@@ -11,6 +11,8 @@ import { NovoPedidoScreen } from '../screens/cliente/NovoPedidoScreen';
 import { AlterarSenhaScreen } from '../screens/comum/AlterarSenhaScreen';
 import { AvisosScreen } from '../screens/comum/AvisosScreen';
 import { DadosPessoaisScreen } from '../screens/comum/DadosPessoaisScreen';
+import { EnderecoFormScreen } from '../screens/comum/EnderecoFormScreen';
+import { MeusEnderecosScreen } from '../screens/comum/MeusEnderecosScreen';
 import { ExcluirContaScreen } from '../screens/comum/ExcluirContaScreen';
 import { PerfilPrestadorScreen } from '../screens/comum/PerfilPrestadorScreen';
 import { PerfilScreen } from '../screens/comum/PerfilScreen';
@@ -94,6 +96,16 @@ export function ClienteNavigator() {
         name="DadosPessoais"
         component={DadosPessoaisScreen}
         options={{ title: 'Dados pessoais' }}
+      />
+      <Pilha.Screen
+        name="MeusEnderecos"
+        component={MeusEnderecosScreen}
+        options={{ title: 'Meus endereços' }}
+      />
+      <Pilha.Screen
+        name="EnderecoForm"
+        component={EnderecoFormScreen}
+        options={({ route }) => ({ title: route.params?.id ? 'Editar endereço' : 'Novo endereço' })}
       />
       <Pilha.Screen
         name="AlterarSenha"

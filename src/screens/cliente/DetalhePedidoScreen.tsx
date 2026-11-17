@@ -19,7 +19,11 @@ import { chaves, useContratacoes, useOrcamentos, useSolicitacao } from '../../ho
 import { Orcamento, PosicaoNaFaixa } from '../../models/contratacao';
 import { ClienteStackParams } from '../../navigation/tipos';
 import { aceitarOrcamento, alterarStatusContratacao } from '../../services/orcamentoService';
-import { avaliarSolicitacao, cancelarSolicitacao } from '../../services/solicitacaoService';
+import {
+  avaliarSolicitacao,
+  cancelarSolicitacao,
+  registrarContratacao,
+} from '../../services/solicitacaoService';
 import { cores } from '../../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../../theme/tipografia';
 import { opcoesDeAgendamento } from '../../utils/agenda';
@@ -63,11 +67,14 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
   }
 
   const contratar = useMutation({
-    mutationFn: () =>
-      aceitarOrcamento(
+    mutationFn: async () => {
+      await aceitarOrcamento(
         { orcamentoId: escolhido!.id, dataAgendada: dataAgendada! },
         chaveContratacao.current,
-      ),
+      );
+      // avisa a API Java: o pedido passa para o prestador, que ve o endereco completo e o telefone
+      await registrarContratacao(id, escolhido!.prestadorId);
+    },
     onSuccess: () => {
       setEscolhido(null);
       chaveContratacao.current = gerarChaveUnica();
@@ -144,6 +151,12 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
       <Text style={estilos.meta}>
         {p.bairro} · aberto em {formatarDataHora(p.criadaEm)}
       </Text>
+      {!!p.endereco && (
+        <Text style={estilos.meta}>
+          {p.endereco}
+          {p.status === 'ABERTA' ? ' (o prestador vê a rua depois da contratação)' : ''}
+        </Text>
+      )}
 
       <CartaoTriagem
         categoria={p.categoria.nome}

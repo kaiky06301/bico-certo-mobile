@@ -7,7 +7,6 @@ export interface Usuario {
   telefone: string | null;
   bairro: string;
   papel: Papel;
-  endereco?: string | null;
   criadoEm?: string;
 }
 
@@ -16,7 +15,28 @@ export interface ContaRequest {
   nome: string;
   telefone?: string;
   bairro: string;
-  endereco?: string;
+}
+
+/** Endereço salvo em "Meus endereços" (casa, casa dos pais, trabalho...). */
+export interface Endereco {
+  id: number;
+  apelido: string;
+  logradouro: string;
+  complemento: string | null;
+  bairro: string;
+  cidade: string;
+  uf: string;
+  principal: boolean;
+}
+
+export interface EnderecoRequest {
+  apelido: string;
+  logradouro: string;
+  complemento?: string;
+  bairro: string;
+  cidade: string;
+  uf: string;
+  principal?: boolean;
 }
 
 export interface AlterarSenhaRequest {

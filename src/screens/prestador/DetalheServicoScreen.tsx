@@ -175,6 +175,14 @@ export function DetalheServicoScreen({ route }: Props) {
             <Text style={estilos.meta}>
               Agendado para {formatarDataHora(contratacao.dataAgendada)}
             </Text>
+            {!!p.endereco && (
+              <View style={estilos.contato}>
+                <Ionicons name="location-outline" size={20} color={cores.secundaria} />
+                <Text style={estilos.contatoTexto}>
+                  {p.endereco} · {p.bairro}
+                </Text>
+              </View>
+            )}
             {contratacao.status === 'Agendada' && (
               <Botao
                 titulo="Iniciar serviço"

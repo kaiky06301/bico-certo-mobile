@@ -31,7 +31,24 @@ export const esquemaDadosPessoais = Yup.object({
   nome: Yup.string().trim().required('Informe seu nome').min(3, 'Nome muito curto'),
   telefone,
   bairro: Yup.string().trim().required('Informe seu bairro'),
-  endereco: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
+});
+
+export const esquemaEndereco = Yup.object({
+  apelido: Yup.string()
+    .trim()
+    .required('Dê um nome (ex.: Casa, Trabalho)')
+    .max(40, 'Máximo de 40 caracteres'),
+  logradouro: Yup.string()
+    .trim()
+    .required('Informe a rua e o número')
+    .max(200, 'Máximo de 200 caracteres'),
+  complemento: Yup.string().trim().max(100, 'Máximo de 100 caracteres'),
+  bairro: Yup.string().trim().required('Informe o bairro').max(80, 'Máximo de 80 caracteres'),
+  cidade: Yup.string().trim().required('Informe a cidade').max(60, 'Máximo de 60 caracteres'),
+  uf: Yup.string()
+    .trim()
+    .required('Informe a UF')
+    .matches(/^[A-Za-z]{2}$/, 'Use a sigla do estado (ex.: SP)'),
 });
 
 export const esquemaSenha = Yup.object({

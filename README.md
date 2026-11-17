@@ -20,9 +20,10 @@ No **Bico Certo**:
 1. O morador descreve o problema com as próprias palavras.
 2. O app mostra o que a **análise do Bico Certo** entendeu: tipo de serviço, urgência, **faixa de preço de referência** e uma dica de segurança para seguir enquanto espera.
 3. Os prestadores daquela área recebem um aviso e enviam **orçamentos**.
-4. Morador e prestador podem **negociar o valor**: qualquer um propõe outro preço com um comentário, e o outro aceita, recusa ou faz uma contraproposta. Se ninguém aceitar, vale o valor atual.
-5. A faixa de referência **não é um teto**: um serviço pode ter particularidades que justifiquem um valor maior. Mas, acima da faixa, quem propõe **precisa explicar o motivo**, e o morador vê o aviso "acima da faixa de referência" junto com a explicação.
-6. O morador escolhe um orçamento, agenda a data e, no fim, **avalia** o prestador.
+4. O pedido pode ser feito em **qualquer endereço salvo** (casa, casa dos pais, trabalho). Antes da contratação os prestadores veem só o bairro; a rua aparece para o prestador escolhido quando o morador aceita o orçamento.
+5. Morador e prestador podem **negociar o valor**: qualquer um propõe outro preço com um comentário, e o outro aceita, recusa ou faz uma contraproposta. Se ninguém aceitar, vale o valor atual.
+6. A faixa de referência **não é um teto**: um serviço pode ter particularidades que justifiquem um valor maior. Mas, acima da faixa, quem propõe **precisa explicar o motivo**, e o morador vê o aviso "acima da faixa de referência" junto com a explicação.
+7. O morador escolhe um orçamento, agenda a data e, no fim, **avalia** o prestador.
 
 ---
 
@@ -32,7 +33,7 @@ No **Bico Certo**:
 |---|---|---|---|
 | 1 | **Login** | público | Autenticação real com JWT na API Java |
 | 2 | **Cadastro** | público | Cria conta de cliente ou de prestador (com o serviço que oferece) |
-| 3 | **Novo pedido** | cliente | Descreve o problema → **análise com IA** (prévia) → confirma o pedido |
+| 3 | **Novo pedido** | cliente | Descreve o problema, escolhe **onde será o serviço** (endereços salvos, com atalho para adicionar outro) → **análise com IA** (prévia) → confirma o pedido |
 | 4 | **Meus pedidos** | cliente | Lista com status, urgência e faixa de referência (puxar para atualizar) |
 | 5 | **Detalhe do pedido** | cliente | Orçamentos recebidos, **negociação de valor** (propor, aceitar, recusar, contrapropor e histórico), contratação com data, cancelar e avaliar com estrelas |
 | 6 | **Editar pedido** | cliente | Corrige a descrição; a análise é refeita |
@@ -41,13 +42,15 @@ No **Bico Certo**:
 | 9 | **Agenda** | prestador | Serviços contratados em ordem de data |
 | 10 | **Avisos** | ambos | Notificações geradas pela API (com selo de não lidas na aba) |
 | 11 | **Perfil** | ambos | Cabeçalho com avatar, papel, nota e selo de verificado; seções **Minha conta**, **Perfil profissional** (prestador) e **Configurações** (notificações, termos, privacidade, excluir conta) e logout |
-| 12 | **Dados pessoais** | ambos | Edita nome, telefone, bairro e endereço principal |
+| 12 | **Dados pessoais** | ambos | Edita nome, telefone e bairro |
 | 13 | **Alterar senha** | ambos | Troca a senha exigindo a atual, com confirmação |
 | 14 | **Perfil do prestador** | ambos | Perfil público: serviço, experiência, região, disponibilidade, nota, **selo de verificado** e avaliações recebidas. O cliente abre pelo orçamento **antes de contratar** e o prestador abre em "Ver como o cliente vê" |
 | 15 | **Perfil profissional** | prestador | Edita serviço, descrição, região de atendimento e disponibilidade |
 | 16 | **Minhas avaliações** | cliente | Avaliações que o cliente fez |
 | 17 | **Excluir conta** | ambos | Exclusão com senha e confirmação (LGPD: dados pessoais apagados) |
 | 18 | **Termos e Privacidade** | ambos | Termos de uso e política de privacidade |
+| 19 | **Meus endereços** | ambos | Lista de endereços (casa, casa dos pais, trabalho...): adicionar, editar, **excluir** e marcar o principal |
+| 20 | **Novo / Editar endereço** | ambos | Apelido (com sugestões), rua e número, complemento, bairro, cidade e UF |
 | + | **Sobre o App** | ambos | Versão e **hash do commit** de referência (não conta para o mínimo de 6 telas) |
 
 ---
@@ -56,7 +59,7 @@ No **Bico Certo**:
 
 | Requisito | Como foi feito |
 |---|---|
-| **1. Mínimo de 6 telas + navegação** | 18 telas + Sobre, com **React Navigation**: pilha de autenticação e, depois do login, abas e pilha diferentes para cliente e prestador (`src/navigation`) |
+| **1. Mínimo de 6 telas + navegação** | 20 telas + Sobre, com **React Navigation**: pilha de autenticação e, depois do login, abas e pilha diferentes para cliente e prestador (`src/navigation`) |
 | **2. CRUD com a API (Axios)** | **Pedidos (API Java):** criar (`POST`), listar e detalhar (`GET`), editar (`PUT`) e cancelar (`DELETE`). Também orçamentos e contratações na API .NET. Loaders, mensagens de erro, "tentar de novo" e puxar para atualizar em todas as listas |
 | **3. Autenticação** | Cadastro e login reais na API Java (JWT), **sessão persistida** (AsyncStorage) com expiração, **logout** que limpa a sessão e o cache, e **rotas protegidas** (sem login só existem Login e Cadastro). Token expirado (401) encerra a sessão automaticamente |
 | **4. Estilização** | Identidade própria: paleta laranja e azul-marinho (`src/theme/cores.ts`), fonte **Poppins**, logo, ícone e splash próprios (`assets/`), ícones Ionicons, componentes com área de toque ≥ 48 px e rótulos de acessibilidade |

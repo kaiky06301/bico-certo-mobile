@@ -8,9 +8,10 @@ import { StyleSheet, Text } from 'react-native';
 import { Botao } from '../../components/Botao';
 import { CampoTexto } from '../../components/CampoTexto';
 import { CartaoTriagem } from '../../components/CartaoTriagem';
+import { SeletorEndereco } from '../../components/SeletorEndereco';
 import { TelaFormulario } from '../../components/TelaFormulario';
 import { useAuth } from '../../contexts/AuthContext';
-import { chaves } from '../../hooks/consultas';
+import { chaves, useEnderecos } from '../../hooks/consultas';
 import { Triagem } from '../../models/solicitacao';
 import { ClienteAbasParams, ClienteStackParams } from '../../navigation/tipos';
 import { criarSolicitacao, simularTriagem } from '../../services/solicitacaoService';
@@ -33,6 +34,11 @@ export function NovoPedidoScreen({ navigation }: Props) {
   const queryClient = useQueryClient();
   const [descricao, setDescricao] = useState('');
   const [bairro, setBairro] = useState(usuario?.bairro ?? '');
+  const enderecos = useEnderecos();
+  const listaEnderecos = enderecos.data ?? [];
+  const [enderecoEscolhido, setEnderecoEscolhido] = useState<number>();
+  // sem escolha manual, vale o endereco principal (o primeiro da lista)
+  const enderecoId = enderecoEscolhido ?? listaEnderecos.find((e) => e.principal)?.id;
   const [erroCampo, setErroCampo] = useState('');
   const [triagem, setTriagem] = useState<Triagem | null>(null);
 
@@ -79,7 +85,25 @@ export function NovoPedidoScreen({ navigation }: Props) {
         erro={erroCampo}
         maxLength={1000}
       />
-      <CampoTexto rotulo="Bairro do serviço" value={bairro} onChangeText={setBairro} />
+      {listaEnderecos.length > 0 ? (
+        <SeletorEndereco
+          enderecos={listaEnderecos}
+          selecionado={enderecoId}
+          aoSelecionar={setEnderecoEscolhido}
+          aoAdicionar={() => navigation.navigate('EnderecoForm', {})}
+        />
+      ) : (
+        <>
+          <CampoTexto rotulo="Bairro do serviço" value={bairro} onChangeText={setBairro} />
+          <Text
+            accessibilityRole="button"
+            style={estilos.salvarEndereco}
+            onPress={() => navigation.navigate('EnderecoForm', {})}
+          >
+            Salvar um endereço completo (casa, trabalho, casa dos pais...)
+          </Text>
+        </>
+      )}
 
       {!triagem && (
         <Botao
@@ -111,7 +135,11 @@ export function NovoPedidoScreen({ navigation }: Props) {
           <Botao
             titulo="Confirmar pedido"
             aoPressionar={() =>
-              confirmar.mutate({ descricao: descricao.trim(), bairro: bairro.trim() })
+              confirmar.mutate(
+                enderecoId
+                  ? { descricao: descricao.trim(), enderecoId }
+                  : { descricao: descricao.trim(), bairro: bairro.trim() },
+              )
             }
             carregando={confirmar.isPending}
           />
@@ -135,6 +163,15 @@ const estilos = StyleSheet.create({
     fontSize: tamanhos.normal,
     color: cores.textoSuave,
     marginBottom: espacos.lg,
+  },
+  salvarEndereco: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.pequeno,
+    color: cores.secundaria,
+    textDecorationLine: 'underline',
+    marginTop: -espacos.sm,
+    marginBottom: espacos.md,
+    paddingVertical: espacos.xs,
   },
   aguarde: {
     fontFamily: fontes.regular,

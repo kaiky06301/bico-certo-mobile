@@ -3,6 +3,8 @@ import { Avaliacao } from '../models/solicitacao';
 import {
   AlterarSenhaRequest,
   ContaRequest,
+  Endereco,
+  EnderecoRequest,
   PerfilPrestador,
   PerfilPrestadorRequest,
   Usuario,
@@ -62,4 +64,30 @@ export async function listarAvaliacoesDoPrestador(prestadorId: number): Promise<
     { params: { size: 20 } },
   );
   return data;
+}
+
+// ---------- meus endereços ----------
+
+export async function listarEnderecos(): Promise<Endereco[]> {
+  const { data } = await apiJava.get<Endereco[]>('/api/conta/enderecos');
+  return data;
+}
+
+export async function criarEndereco(dados: EnderecoRequest): Promise<Endereco> {
+  const { data } = await apiJava.post<Endereco>('/api/conta/enderecos', dados);
+  return data;
+}
+
+export async function atualizarEndereco(id: number, dados: EnderecoRequest): Promise<Endereco> {
+  const { data } = await apiJava.put<Endereco>(`/api/conta/enderecos/${id}`, dados);
+  return data;
+}
+
+export async function tornarPrincipal(id: number): Promise<Endereco> {
+  const { data } = await apiJava.patch<Endereco>(`/api/conta/enderecos/${id}/principal`);
+  return data;
+}
+
+export async function excluirEndereco(id: number): Promise<void> {
+  await apiJava.delete(`/api/conta/enderecos/${id}`);
 }

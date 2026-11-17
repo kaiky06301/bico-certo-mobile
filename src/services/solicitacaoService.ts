@@ -70,3 +70,17 @@ export async function avaliarSolicitacao(
   const { data } = await apiJava.post<Avaliacao>(`${BASE}/${id}/avaliacao`, { nota, comentario });
   return data;
 }
+
+/**
+ * Depois de aceitar o orçamento na API .NET, o cliente registra o prestador contratado na API Java:
+ * o pedido passa para "em atendimento" e o prestador passa a ver o endereço completo e o telefone.
+ */
+export async function registrarContratacao(
+  id: number,
+  prestadorUsuarioId: number,
+): Promise<Solicitacao> {
+  const { data } = await apiJava.patch<Solicitacao>(`${BASE}/${id}/contratacao`, {
+    prestadorUsuarioId,
+  });
+  return data;
+}

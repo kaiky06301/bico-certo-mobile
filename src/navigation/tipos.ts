@@ -8,6 +8,8 @@ type TelasDaConta = {
   ExcluirConta: undefined;
   TextoLegal: { tipo: 'termos' | 'privacidade' };
   PerfilPrestador: { usuarioId: number };
+  MeusEnderecos: undefined;
+  EnderecoForm: { id?: number };
 };
 
 export type AuthStackParams = {

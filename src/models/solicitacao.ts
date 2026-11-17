@@ -35,6 +35,8 @@ export interface Solicitacao {
   id: number;
   descricao: string;
   bairro: string;
+  /** Rua e número: o dono sempre vê; o prestador só depois da contratação. */
+  endereco: string | null;
   status: StatusSolicitacao;
   urgencia: Urgencia;
   categoria: CategoriaResumo;
@@ -52,6 +54,8 @@ export interface Solicitacao {
 export interface SolicitacaoRequest {
   descricao: string;
   bairro?: string;
+  /** Endereço salvo: define o bairro e a rua do serviço. */
+  enderecoId?: number;
 }
 
 export interface Avaliacao {
