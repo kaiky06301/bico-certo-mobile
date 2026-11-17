@@ -40,7 +40,14 @@ No **Bico Certo**:
 | 8 | **Detalhe do serviço** | prestador | Envia orçamento, **negocia o valor** com o cliente, inicia e conclui o serviço |
 | 9 | **Agenda** | prestador | Serviços contratados em ordem de data |
 | 10 | **Avisos** | ambos | Notificações geradas pela API (com selo de não lidas na aba) |
-| 11 | **Perfil** | ambos | Dados do usuário e logout |
+| 11 | **Perfil** | ambos | Cabeçalho com avatar, papel, nota e selo de verificado; seções **Minha conta**, **Perfil profissional** (prestador) e **Configurações** (notificações, termos, privacidade, excluir conta) e logout |
+| 12 | **Dados pessoais** | ambos | Edita nome, telefone, bairro e endereço principal |
+| 13 | **Alterar senha** | ambos | Troca a senha exigindo a atual, com confirmação |
+| 14 | **Perfil do prestador** | ambos | Perfil público: serviço, experiência, região, disponibilidade, nota, **selo de verificado** e avaliações recebidas. O cliente abre pelo orçamento **antes de contratar** e o prestador abre em "Ver como o cliente vê" |
+| 15 | **Perfil profissional** | prestador | Edita serviço, descrição, região de atendimento e disponibilidade |
+| 16 | **Minhas avaliações** | cliente | Avaliações que o cliente fez |
+| 17 | **Excluir conta** | ambos | Exclusão com senha e confirmação (LGPD: dados pessoais apagados) |
+| 18 | **Termos e Privacidade** | ambos | Termos de uso e política de privacidade |
 | + | **Sobre o App** | ambos | Versão e **hash do commit** de referência (não conta para o mínimo de 6 telas) |
 
 ---
@@ -49,7 +56,7 @@ No **Bico Certo**:
 
 | Requisito | Como foi feito |
 |---|---|
-| **1. Mínimo de 6 telas + navegação** | 11 telas + Sobre, com **React Navigation**: pilha de autenticação e, depois do login, abas e pilha diferentes para cliente e prestador (`src/navigation`) |
+| **1. Mínimo de 6 telas + navegação** | 18 telas + Sobre, com **React Navigation**: pilha de autenticação e, depois do login, abas e pilha diferentes para cliente e prestador (`src/navigation`) |
 | **2. CRUD com a API (Axios)** | **Pedidos (API Java):** criar (`POST`), listar e detalhar (`GET`), editar (`PUT`) e cancelar (`DELETE`). Também orçamentos e contratações na API .NET. Loaders, mensagens de erro, "tentar de novo" e puxar para atualizar em todas as listas |
 | **3. Autenticação** | Cadastro e login reais na API Java (JWT), **sessão persistida** (AsyncStorage) com expiração, **logout** que limpa a sessão e o cache, e **rotas protegidas** (sem login só existem Login e Cadastro). Token expirado (401) encerra a sessão automaticamente |
 | **4. Estilização** | Identidade própria: paleta laranja e azul-marinho (`src/theme/cores.ts`), fonte **Poppins**, logo, ícone e splash próprios (`assets/`), ícones Ionicons, componentes com área de toque ≥ 48 px e rótulos de acessibilidade |

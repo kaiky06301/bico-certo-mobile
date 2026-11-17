@@ -20,6 +20,8 @@ interface AuthContextValor {
   entrar: (dados: LoginRequest) => Promise<void>;
   cadastrar: (dados: CadastroRequest) => Promise<void>;
   sair: () => Promise<void>;
+  /** Atualiza os dados do usuário na sessão (depois de editar "Dados pessoais"). */
+  atualizarUsuario: (dados: Usuario) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValor | undefined>(undefined);
@@ -76,9 +78,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [entrar],
   );
 
+  const atualizarUsuario = useCallback(async (dados: Usuario) => {
+    const sessao = await carregarSessao();
+    if (sessao) await salvarSessao({ ...sessao, usuario: dados });
+    setUsuario(dados);
+  }, []);
+
   const valor = useMemo(
-    () => ({ usuario, carregandoSessao, entrar, cadastrar, sair }),
-    [usuario, carregandoSessao, entrar, cadastrar, sair],
+    () => ({ usuario, carregandoSessao, entrar, cadastrar, sair, atualizarUsuario }),
+    [usuario, carregandoSessao, entrar, cadastrar, sair, atualizarUsuario],
   );
 
   return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>;

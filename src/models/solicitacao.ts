@@ -58,7 +58,9 @@ export interface Avaliacao {
   id: number;
   solicitacaoId: number;
   prestadorId: number;
+  prestador: string;
   cliente: string;
+  servico: string;
   nota: number;
   comentario: string | null;
   criadaEm: string;

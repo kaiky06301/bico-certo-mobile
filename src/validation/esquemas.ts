@@ -23,6 +23,37 @@ export const esquemaCadastro = Yup.object({
   }),
 });
 
+const telefone = Yup.string()
+  .trim()
+  .matches(/^[0-9()+\- ]{8,20}$/, { message: 'Telefone inválido', excludeEmptyString: true });
+
+export const esquemaDadosPessoais = Yup.object({
+  nome: Yup.string().trim().required('Informe seu nome').min(3, 'Nome muito curto'),
+  telefone,
+  bairro: Yup.string().trim().required('Informe seu bairro'),
+  endereco: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
+});
+
+export const esquemaSenha = Yup.object({
+  senhaAtual: Yup.string().required('Informe a senha atual'),
+  novaSenha: Yup.string()
+    .required('Crie a nova senha')
+    .min(6, 'A senha precisa ter pelo menos 6 caracteres')
+    .notOneOf([Yup.ref('senhaAtual')], 'A nova senha deve ser diferente da atual'),
+  confirmacao: Yup.string()
+    .required('Repita a nova senha')
+    .oneOf([Yup.ref('novaSenha')], 'As senhas não conferem'),
+});
+
+export const esquemaPerfilProfissional = Yup.object({
+  categoriaId: Yup.number().required('Escolha o serviço que você faz'),
+  descricao: Yup.string().trim().max(500, 'Máximo de 500 caracteres'),
+  regiaoAtendimento: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
+  disponibilidade: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
+  bairro: Yup.string().trim().required('Informe seu bairro'),
+  telefone,
+});
+
 export const esquemaPedido = Yup.object({
   descricao: Yup.string()
     .trim()

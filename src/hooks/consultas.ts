@@ -1,6 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { listarCategorias } from '../services/categoriaService';
+import {
+  buscarConta,
+  buscarMeuPerfilPrestador,
+  buscarPerfilPrestadorPorUsuario,
+  listarAvaliacoesDoPrestador,
+  listarMinhasAvaliacoes,
+} from '../services/contaService';
+import { carregarPreferencias } from '../services/preferenciasStorage';
 import { contarNaoLidas, listarNotificacoes } from '../services/notificacaoService';
 import {
   listarContratacoes,
@@ -25,6 +33,12 @@ export const chaves = {
   propostas: (orcamentoId: number) => ['orcamentos', 'propostas', orcamentoId] as const,
   contratacoes: ['contratacoes'] as const,
   notificacoes: ['notificacoes'] as const,
+  conta: ['conta'] as const,
+  minhasAvaliacoes: ['conta', 'avaliacoes'] as const,
+  meuPerfilPrestador: ['prestadores', 'me'] as const,
+  perfilPrestador: (usuarioId: number) => ['prestadores', 'usuario', usuarioId] as const,
+  avaliacoesPrestador: (prestadorId: number) => ['prestadores', prestadorId, 'avaliacoes'] as const,
+  preferencias: ['preferencias'] as const,
   naoLidas: ['notificacoes', 'naoLidas'] as const,
 };
 
@@ -79,7 +93,49 @@ export function useNotificacoes() {
   return useQuery({ queryKey: chaves.notificacoes, queryFn: listarNotificacoes });
 }
 
-/** Contador do selo da aba de avisos: atualiza sozinho a cada 30 segundos. */
+export function usePreferencias() {
+  return useQuery({ queryKey: chaves.preferencias, queryFn: carregarPreferencias });
+}
+
+/** Contador do selo da aba de avisos: atualiza a cada 30 segundos, se as notificações estiverem ligadas. */
 export function useNaoLidas() {
-  return useQuery({ queryKey: chaves.naoLidas, queryFn: contarNaoLidas, refetchInterval: 30000 });
+  const preferencias = usePreferencias();
+  const ligadas = preferencias.data?.notificacoes ?? true;
+  return useQuery({
+    queryKey: chaves.naoLidas,
+    queryFn: contarNaoLidas,
+    refetchInterval: ligadas ? 30000 : false,
+    enabled: ligadas,
+  });
+}
+
+export function useConta() {
+  return useQuery({ queryKey: chaves.conta, queryFn: buscarConta });
+}
+
+export function useMinhasAvaliacoes() {
+  return useQuery({ queryKey: chaves.minhasAvaliacoes, queryFn: listarMinhasAvaliacoes });
+}
+
+export function useMeuPerfilPrestador(habilitado: boolean) {
+  return useQuery({
+    queryKey: chaves.meuPerfilPrestador,
+    queryFn: buscarMeuPerfilPrestador,
+    enabled: habilitado,
+  });
+}
+
+export function usePerfilPrestador(usuarioId: number) {
+  return useQuery({
+    queryKey: chaves.perfilPrestador(usuarioId),
+    queryFn: () => buscarPerfilPrestadorPorUsuario(usuarioId),
+  });
+}
+
+export function useAvaliacoesPrestador(prestadorId: number | undefined) {
+  return useQuery({
+    queryKey: chaves.avaliacoesPrestador(prestadorId ?? 0),
+    queryFn: () => listarAvaliacoesDoPrestador(prestadorId!),
+    enabled: !!prestadorId,
+  });
 }

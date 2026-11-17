@@ -4,9 +4,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useNaoLidas } from '../hooks/consultas';
 import { AvisosScreen } from '../screens/comum/AvisosScreen';
+import { AlterarSenhaScreen } from '../screens/comum/AlterarSenhaScreen';
+import { DadosPessoaisScreen } from '../screens/comum/DadosPessoaisScreen';
+import { ExcluirContaScreen } from '../screens/comum/ExcluirContaScreen';
+import { PerfilPrestadorScreen } from '../screens/comum/PerfilPrestadorScreen';
 import { PerfilScreen } from '../screens/comum/PerfilScreen';
 import { SobreScreen } from '../screens/comum/SobreScreen';
+import { TextoLegalScreen } from '../screens/comum/TextoLegalScreen';
 import { AgendaScreen } from '../screens/prestador/AgendaScreen';
+import { PerfilProfissionalScreen } from '../screens/prestador/PerfilProfissionalScreen';
 import { DetalheServicoScreen } from '../screens/prestador/DetalheServicoScreen';
 import { PedidosAbertosScreen } from '../screens/prestador/PedidosAbertosScreen';
 import { opcoesAbas, opcoesPilha } from './opcoes';
@@ -75,7 +81,33 @@ export function PrestadorNavigator() {
         component={DetalheServicoScreen}
         options={{ title: 'Detalhe do serviço' }}
       />
+      <Pilha.Screen
+        name="PerfilProfissional"
+        component={PerfilProfissionalScreen}
+        options={{ title: 'Perfil profissional' }}
+      />
       <Pilha.Screen name="Sobre" component={SobreScreen} options={{ title: 'Sobre o app' }} />
+      <Pilha.Screen
+        name="DadosPessoais"
+        component={DadosPessoaisScreen}
+        options={{ title: 'Dados pessoais' }}
+      />
+      <Pilha.Screen
+        name="AlterarSenha"
+        component={AlterarSenhaScreen}
+        options={{ title: 'Alterar senha' }}
+      />
+      <Pilha.Screen
+        name="ExcluirConta"
+        component={ExcluirContaScreen}
+        options={{ title: 'Excluir conta' }}
+      />
+      <Pilha.Screen name="TextoLegal" component={TextoLegalScreen} options={{ title: '' }} />
+      <Pilha.Screen
+        name="PerfilPrestador"
+        component={PerfilPrestadorScreen}
+        options={{ title: 'Perfil do prestador' }}
+      />
     </Pilha.Navigator>
   );
 }

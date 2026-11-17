@@ -208,6 +208,15 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                   <Text style={estilos.prestador}>{orcamento.prestadorNome}</Text>
                   <Selo texto={selo.texto} tom={selo.tom} />
                 </View>
+                <Text
+                  accessibilityRole="link"
+                  style={estilos.verPerfil}
+                  onPress={() =>
+                    navigation.navigate('PerfilPrestador', { usuarioId: orcamento.prestadorId })
+                  }
+                >
+                  Ver perfil, avaliações e verificação
+                </Text>
                 <Text style={estilos.valor}>{formatarMoeda(orcamento.valor)}</Text>
                 <Text style={estilos.meta}>
                   Prazo: {orcamento.prazoDias} dia(s)
@@ -354,6 +363,13 @@ const estilos = StyleSheet.create({
     fontStyle: 'italic',
     color: cores.textoSuave,
     marginTop: espacos.xs,
+  },
+  verPerfil: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.pequeno,
+    color: cores.secundaria,
+    textDecorationLine: 'underline',
+    paddingVertical: espacos.xs,
   },
   escolhido: { borderColor: cores.primaria, borderWidth: 2 },
   botaoCartao: { marginTop: espacos.sm },
