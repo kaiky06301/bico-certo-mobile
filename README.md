@@ -8,7 +8,7 @@
 | **Vídeo (até 5 min)** | `LINK_DO_VIDEO` |
 | **Publicação (Firebase App Distribution)** | `LINK_DO_FIREBASE` |
 | **API Java (usuários, pedidos e triagem com IA)** | https://github.com/kaiky06301/bico-certo-java |
-| **API .NET (orçamentos e contratações)** | `LINK_DO_REPOSITORIO_DOTNET` |
+| **API .NET (orçamentos e contratações)** | https://github.com/kaiky06301/bico-certo-dotnet |
 
 ---
 
