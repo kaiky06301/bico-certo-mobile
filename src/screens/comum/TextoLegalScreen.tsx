@@ -37,7 +37,7 @@ const textos: Record<Tipo, { titulo: string; secoes: [string, string][] }> = {
     secoes: [
       [
         'Quais dados usamos',
-        'Nome, e-mail, telefone, bairro, endereço (opcional) e a descrição dos seus pedidos.',
+        'Nome, e-mail, telefone, bairro, endereços salvos (opcional) e a descrição dos seus pedidos.',
       ],
       [
         'Para quê',
@@ -45,7 +45,7 @@ const textos: Record<Tipo, { titulo: string; secoes: [string, string][] }> = {
       ],
       [
         'Quem vê',
-        'Os prestadores da categoria do seu pedido veem seu nome, seu bairro e a descrição do problema. O telefone só aparece depois que um prestador assume o pedido. O endereço completo fica só no seu perfil, e outros clientes nunca veem seus dados.',
+        'Os prestadores da categoria do seu pedido veem seu nome, seu bairro e a descrição do problema. A rua, o número e o telefone só aparecem para o prestador que você contratar, depois que você aceita o orçamento. Outros clientes nunca veem seus dados.',
       ],
       [
         'Seus direitos (LGPD)',
