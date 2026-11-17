@@ -6,9 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import {
   Alert,
-  Linking,
   Modal,
-  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -277,16 +275,6 @@ function CartaoAgenda({
     onError: (e) => Alert.alert('Não foi possível cancelar', mensagemDeErro(e)),
   });
 
-  function abrirRota() {
-    if (!p?.endereco) return;
-    const destino = encodeURIComponent(p.endereco);
-    void Linking.openURL(
-      Platform.OS === 'ios'
-        ? `http://maps.apple.com/?daddr=${destino}`
-        : `https://www.google.com/maps/dir/?api=1&destination=${destino}`,
-    );
-  }
-
   function confirmarDesistencia() {
     Alert.alert(
       'Cancelar este agendamento?',
@@ -339,9 +327,6 @@ function CartaoAgenda({
             />
           )}
           <View style={estilos.links}>
-            {!!p?.endereco && (
-              <Link icone="map-outline" texto="Ver rota" aoPressionar={abrirRota} />
-            )}
             {c.status === 'Agendada' && (
               <Link
                 icone="calendar-outline"
@@ -398,7 +383,9 @@ function Info({ icone, texto }: { icone: keyof typeof Ionicons.glyphMap; texto: 
   return (
     <View style={estilos.info}>
       <Ionicons name={icone} size={16} color={cores.textoSuave} />
-      <Text style={estilos.infoTexto}>{texto}</Text>
+      <Text selectable style={estilos.infoTexto}>
+        {texto}
+      </Text>
     </View>
   );
 }

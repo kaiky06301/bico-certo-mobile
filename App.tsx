@@ -6,15 +6,11 @@ import {
   useFonts,
 } from '@expo-google-fonts/poppins';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider } from './src/contexts/AuthContext';
 import { RaizNavigator } from './src/navigation/RaizNavigator';
-
-SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,10 +26,7 @@ export default function App() {
     Poppins_700Bold,
   });
 
-  useEffect(() => {
-    if (fontesCarregadas || erroFontes) SplashScreen.hideAsync();
-  }, [fontesCarregadas, erroFontes]);
-
+  // Enquanto a fonte Poppins carrega, a tela de abertura (app.json) continua visível
   if (!fontesCarregadas && !erroFontes) return null;
 
   return (

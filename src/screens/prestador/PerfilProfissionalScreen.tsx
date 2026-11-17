@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, usePreventRemove } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { Avatar } from '../../components/Avatar';
@@ -86,7 +86,6 @@ function Formulario({ perfil }: { perfil: PerfilPrestador }) {
   const [fim, setFim] = useState(inicial.fim);
   const [emergencia, setEmergencia] = useState(inicial.emergencia);
   const [erros, setErros] = useState<Record<string, string>>({});
-  const [salvo, setSalvo] = useState(false);
 
   const atual = {
     categorias: categoriaIds,
@@ -101,22 +100,6 @@ function Formulario({ perfil }: { perfil: PerfilPrestador }) {
     emergencia,
   };
   const alterado = JSON.stringify(atual) !== JSON.stringify(inicial);
-
-  // Avisa antes de sair com alterações não salvas
-  usePreventRemove(alterado && !salvo, ({ data }) => {
-    Alert.alert('Descartar alterações?', 'Você mudou o perfil e ainda não salvou.', [
-      { text: 'Continuar editando', style: 'cancel' },
-      {
-        text: 'Descartar',
-        style: 'destructive',
-        onPress: () => navigation.dispatch(data.action),
-      },
-    ]);
-  });
-
-  useEffect(() => {
-    if (salvo) navigation.goBack();
-  }, [salvo, navigation]);
 
   const salvar = useMutation({
     mutationFn: () =>
@@ -141,7 +124,7 @@ function Formulario({ perfil }: { perfil: PerfilPrestador }) {
       void queryClient.invalidateQueries({ queryKey: ['prestadores'] });
       void queryClient.invalidateQueries({ queryKey: ['solicitacoes'] });
       Alert.alert('Perfil atualizado!', 'É assim que os clientes vão ver você.');
-      setSalvo(true);
+      navigation.goBack();
     },
   });
 

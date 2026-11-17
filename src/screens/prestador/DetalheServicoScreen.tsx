@@ -5,16 +5,7 @@ import { ComponentRef, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { distanciaKm, textoDistancia } from '../../utils/distancia';
 import { seloDoPrestador, situacaoDoPrestador } from '../../utils/situacaoPrestador';
-import {
-  Alert,
-  Linking,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
-} from 'react-native';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { Botao } from '../../components/Botao';
 import { CampoTexto } from '../../components/CampoTexto';
@@ -231,13 +222,9 @@ export function DetalheServicoScreen({ route }: Props) {
         <Cartao>
           <View style={estilos.contato}>
             <Ionicons name="call-outline" size={20} color={cores.secundaria} />
-            <Text style={estilos.contatoTexto}>{p.cliente.telefone}</Text>
-            <Botao
-              titulo="Ligar"
-              variante="contorno"
-              estilo={estilos.botaoPequeno}
-              aoPressionar={() => Linking.openURL(`tel:${p.cliente.telefone}`)}
-            />
+            <Text selectable style={estilos.contatoTexto}>
+              {p.cliente.telefone}
+            </Text>
           </View>
         </Cartao>
       )}
@@ -497,7 +484,6 @@ const estilos = StyleSheet.create({
   valor: { fontFamily: fontes.negrito, fontSize: tamanhos.grande, color: cores.primariaEscura },
   contato: { flexDirection: 'row', alignItems: 'center', gap: espacos.sm },
   contatoTexto: { flex: 1, fontFamily: fontes.media, color: cores.secundaria },
-  botaoPequeno: { minHeight: 36 },
   botao: { marginTop: espacos.md },
   sucesso: {
     fontFamily: fontes.media,

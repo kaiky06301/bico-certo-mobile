@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Alert, Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Botao } from '../../components/Botao';
 import { CampoTexto } from '../../components/CampoTexto';
@@ -199,16 +199,15 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
           {!!p.endereco && etapa !== 'concluido' && (
             <Dado icone="home-outline" rotulo="Endereço do serviço" valor={p.endereco} />
           )}
+          {!!p.prestador?.telefone && etapa !== 'concluido' && (
+            <Dado
+              icone="call-outline"
+              rotulo="Telefone do prestador"
+              valor={p.prestador.telefone}
+            />
+          )}
 
           <View style={estilos.botoesContato}>
-            {!!p.prestador?.telefone && etapa !== 'concluido' && (
-              <Botao
-                titulo="Ligar"
-                variante="secundaria"
-                estilo={estilos.botaoMetade}
-                aoPressionar={() => Linking.openURL(`tel:${p.prestador?.telefone}`)}
-              />
-            )}
             {usuarioPrestador && (
               <Botao
                 titulo="Ver perfil"
@@ -320,7 +319,9 @@ function Dado({
       <Ionicons name={icone} size={20} color={cores.secundaria} />
       <View style={estilos.dadoTextos}>
         <Text style={estilos.dadoRotulo}>{rotulo}</Text>
-        <Text style={estilos.dadoValor}>{valor}</Text>
+        <Text selectable style={estilos.dadoValor}>
+          {valor}
+        </Text>
       </View>
     </View>
   );
