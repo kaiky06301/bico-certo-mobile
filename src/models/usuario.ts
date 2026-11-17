@@ -57,6 +57,8 @@ export interface PerfilPrestador {
   verificado: boolean;
   notaMedia: number;
   totalAvaliacoes: number;
+  /** Serviços que o prestador já concluiu pelo Bico Certo. */
+  servicosConcluidos: number;
   membroDesde: string;
 }
 

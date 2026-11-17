@@ -70,6 +70,21 @@ export function PerfilPrestadorScreen() {
         </View>
       </Cartao>
 
+      <View style={estilos.numeros}>
+        <Numero
+          valor={String(p.servicosConcluidos ?? 0)}
+          rotulo={p.servicosConcluidos === 1 ? 'serviço feito' : 'serviços feitos'}
+        />
+        <Numero
+          valor={p.totalAvaliacoes > 0 ? `★ ${p.notaMedia.toFixed(1).replace('.', ',')}` : '–'}
+          rotulo="nota média"
+        />
+        <Numero
+          valor={String(p.totalAvaliacoes)}
+          rotulo={p.totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'}
+        />
+      </View>
+
       <Cartao estilo={estilos.detalhes}>
         <Info icone="construct-outline" titulo="Serviço" texto={p.categoria.nome} />
         <Info
@@ -132,6 +147,15 @@ function Info({
   );
 }
 
+function Numero({ valor, rotulo }: { valor: string; rotulo: string }) {
+  return (
+    <View style={estilos.numero} accessible accessibilityLabel={`${valor} ${rotulo}`}>
+      <Text style={estilos.numeroValor}>{valor}</Text>
+      <Text style={estilos.numeroRotulo}>{rotulo}</Text>
+    </View>
+  );
+}
+
 const estilos = StyleSheet.create({
   tela: { flex: 1, backgroundColor: cores.fundo },
   conteudo: { padding: espacos.md, paddingBottom: espacos.xl * 2 },
@@ -141,6 +165,18 @@ const estilos = StyleSheet.create({
   categoria: { fontFamily: fontes.regular, fontSize: tamanhos.normal, color: cores.textoSuave },
   nota: { fontFamily: fontes.media, fontSize: tamanhos.normal, color: cores.alerta },
   detalhes: { marginTop: espacos.md, gap: espacos.md },
+  numeros: { flexDirection: 'row', gap: espacos.sm, marginTop: espacos.md },
+  numero: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: espacos.md,
+    backgroundColor: cores.superficie,
+    borderRadius: raio.medio,
+    borderWidth: 1,
+    borderColor: cores.borda,
+  },
+  numeroValor: { fontFamily: fontes.negrito, fontSize: tamanhos.grande, color: cores.texto },
+  numeroRotulo: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave },
   info: { flexDirection: 'row', gap: espacos.sm },
   icone: {
     width: 32,

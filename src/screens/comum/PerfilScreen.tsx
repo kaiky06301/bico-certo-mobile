@@ -9,6 +9,7 @@ import { Selo } from '../../components/Selo';
 import { useAuth } from '../../contexts/AuthContext';
 import { chaves, useMeuPerfilPrestador, usePreferencias } from '../../hooks/consultas';
 import { salvarPreferencias } from '../../services/preferenciasStorage';
+import { textoServicos } from '../../utils/formatacao';
 import { cores } from '../../theme/cores';
 import { espacos, fontes, tamanhos } from '../../theme/tipografia';
 
@@ -56,7 +57,7 @@ export function PerfilScreen() {
           {ehPrestador && perfil && perfil.totalAvaliacoes > 0 && (
             <Text style={estilos.nota}>
               ★ {perfil.notaMedia.toFixed(1).replace('.', ',')} ({perfil.totalAvaliacoes}{' '}
-              avaliações)
+              avaliações) · {textoServicos(perfil.servicosConcluidos)}
             </Text>
           )}
         </View>

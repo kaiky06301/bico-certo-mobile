@@ -20,6 +20,12 @@ export function formatarDataHora(iso: string): string {
   })}`;
 }
 
+/** "Nenhum serviço feito ainda", "1 serviço feito", "12 serviços feitos". */
+export function textoServicos(n: number): string {
+  if (!n) return 'Nenhum serviço feito ainda';
+  return `${n} ${n === 1 ? 'serviço feito' : 'serviços feitos'}`;
+}
+
 /** "Hoje às 10:30", "Ontem às 18:05" ou "14/11 às 09:00". */
 export function formatarQuando(iso: string): string {
   const data = new Date(iso);

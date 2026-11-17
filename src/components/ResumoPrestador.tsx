@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { usePerfilPrestador } from '../hooks/consultas';
 import { cores } from '../theme/cores';
 import { espacos, fontes, tamanhos } from '../theme/tipografia';
+import { textoServicos } from '../utils/formatacao';
 import { Avatar } from './Avatar';
 
 interface Props {
@@ -48,6 +49,12 @@ export function ResumoPrestador({ usuarioId, nome, tamanhoAvatar = 52 }: Props) 
           </View>
         )}
         {p && (
+          <View style={estilos.nota}>
+            <Ionicons name="briefcase-outline" size={14} color={cores.secundaria} />
+            <Text style={estilos.servicos}>{textoServicos(p.servicosConcluidos)}</Text>
+          </View>
+        )}
+        {p && (
           <Text style={estilos.textoSuave} numberOfLines={1}>
             {p.categoria.nome} · {p.regiaoAtendimento || p.bairro}
           </Text>
@@ -68,5 +75,6 @@ const estilos = StyleSheet.create({
     flexShrink: 1,
   },
   nota: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  servicos: { fontFamily: fontes.media, fontSize: tamanhos.pequeno, color: cores.secundaria },
   textoSuave: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave },
 });
