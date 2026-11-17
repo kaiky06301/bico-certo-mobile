@@ -5,6 +5,7 @@
 
 | | |
 |---|---|
+| **Repositório deste app** | https://github.com/kaiky06301/bico-certo-mobile |
 | **Vídeo (até 5 min)** | `LINK_DO_VIDEO` |
 | **Publicação (Firebase App Distribution)** | `LINK_DO_FIREBASE` |
 | **API Java (usuários, pedidos e triagem com IA)** | https://github.com/kaiky06301/bico-certo-java |
