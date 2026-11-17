@@ -1,0 +1,17 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_JAVA_API_URL": "https://bico-certo-api.onrender.com",
+        "EXPO_PUBLIC_NET_API_URL": "https://bico-certo-dotnet.onrender.com"
+      }
+    }
+  }
+}

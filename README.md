@@ -10,6 +10,7 @@
 | **Publicação (Firebase App Distribution)** | `LINK_DO_FIREBASE` |
 | **API Java (usuários, pedidos e triagem com IA)** | https://github.com/kaiky06301/bico-certo-java |
 | **API .NET (orçamentos e contratações)** | https://github.com/kaiky06301/bico-certo-dotnet |
+| **APIs no ar (Render)** | Java: https://bico-certo-api.onrender.com · .NET: https://bico-certo-dotnet.onrender.com |
 
 ---
 
@@ -142,6 +143,12 @@ npx expo start
 ```
 
 Leia o QR Code com o Expo Go. Em desenvolvimento, o app usa automaticamente o IP do computador que está rodando o Metro para chegar às APIs. Para apontar para APIs publicadas, defina `EXPO_PUBLIC_JAVA_API_URL` e `EXPO_PUBLIC_NET_API_URL`.
+
+**Versão publicada:** o perfil `production` do `eas.json` gera o APK já apontando para as APIs no Render (https://bico-certo-api.onrender.com e https://bico-certo-dotnet.onrender.com). No plano gratuito, a primeira chamada depois de 15 min sem uso demora cerca de 1 minuto (o app espera até 60 s e avisa se o servidor ainda estiver acordando).
+
+```bash
+npx eas-cli build -p android --profile production
+```
 
 **Usuários de teste** (senha `senha123`):
 

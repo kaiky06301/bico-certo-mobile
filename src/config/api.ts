@@ -17,4 +17,5 @@ export const JAVA_API_URL =
 export const NET_API_URL =
   process.env.EXPO_PUBLIC_NET_API_URL ?? `http://${hostDoComputador()}:5090`;
 
-export const TEMPO_LIMITE_MS = 30000;
+/** 60 s: no plano gratuito do Render a primeira chamada depois de um tempo parado demora cerca de 1 minuto. */
+export const TEMPO_LIMITE_MS = 60000;

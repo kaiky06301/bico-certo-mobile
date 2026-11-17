@@ -3,6 +3,9 @@ import { isAxiosError } from 'axios';
 /** Transforma o erro de qualquer uma das APIs em uma mensagem amigavel para o usuario. */
 export function mensagemDeErro(erro: unknown): string {
   if (isAxiosError(erro)) {
+    if (erro.code === 'ECONNABORTED') {
+      return 'O servidor demorou para responder (ele pode estar acordando). Tente de novo em instantes.';
+    }
     if (!erro.response) {
       return 'Sem conexão com o servidor. Verifique sua internet e tente de novo.';
     }
