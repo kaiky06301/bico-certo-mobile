@@ -84,10 +84,26 @@ export interface Avaliacao {
   criadaEm: string;
 }
 
+export type TipoAviso =
+  | 'PEDIDO'
+  | 'ORCAMENTO'
+  | 'NEGOCIACAO'
+  | 'CONTRATACAO'
+  | 'AGENDAMENTO'
+  | 'SERVICO'
+  | 'CONCLUSAO'
+  | 'CANCELAMENTO';
+
 export interface Notificacao {
   id: number;
   solicitacaoId: number;
+  tipo: TipoAviso;
+  titulo: string;
   mensagem: string;
+  /** Valor citado no aviso (orçamento, contraproposta, contratação). */
+  valor: number | null;
+  /** Orçamento ligado ao aviso: o toque abre direto a proposta. */
+  orcamentoId: number | null;
   lida: boolean;
   criadaEm: string;
 }

@@ -14,10 +14,22 @@ export function formatarData(iso: string): string {
 
 export function formatarDataHora(iso: string): string {
   const data = new Date(iso);
-  return `${data.toLocaleDateString('pt-BR')} as ${data.toLocaleTimeString('pt-BR', {
+  return `${data.toLocaleDateString('pt-BR')} às ${data.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
   })}`;
+}
+
+/** "Hoje às 10:30", "Ontem às 18:05" ou "14/11 às 09:00". */
+export function formatarQuando(iso: string): string {
+  const data = new Date(iso);
+  const hora = data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const hoje = new Date();
+  const ontem = new Date();
+  ontem.setDate(hoje.getDate() - 1);
+  if (data.toDateString() === hoje.toDateString()) return `Hoje às ${hora}`;
+  if (data.toDateString() === ontem.toDateString()) return `Ontem às ${hora}`;
+  return `${data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} às ${hora}`;
 }
 
 /** Gera um identificador unico (UUID v4) para o header Idempotency-Key. */

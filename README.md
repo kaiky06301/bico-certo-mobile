@@ -41,7 +41,7 @@ No **Bico Certo**:
 | 8 | **Pedidos abertos** | prestador | Pedidos da sua área esperando orçamento |
 | 9 | **Detalhe do serviço** | prestador | Envia orçamento, **negocia o valor** com o cliente, inicia e conclui o serviço |
 | 10 | **Agenda** | prestador | Serviços contratados em ordem de data |
-| 11 | **Avisos** | ambos | Notificações geradas pela API (com selo de não lidas na aba) |
+| 11 | **Avisos** | ambos | Central de acompanhamento: filtros **Todas / Não lidas / Lidas**, ícone e título por **tipo** (orçamento, negociação, contratação, serviço, conclusão, cancelamento), valor e **atalho** ("Ver orçamento →" abre a proposta). Não lidos com fundo laranja e selo "Novo"; ao tocar, vira lido. Menu ⋯: marcar todas como lidas e limpar lidas; segurar exclui um aviso |
 | 12 | **Perfil** | ambos | Cabeçalho com avatar, papel, nota e selo de verificado; seções **Minha conta**, **Perfil profissional** (prestador) e **Configurações** (notificações, termos, privacidade, excluir conta) e logout |
 | 13 | **Dados pessoais** | ambos | Edita nome, telefone e bairro |
 | 14 | **Alterar senha** | ambos | Troca a senha exigindo a atual, com confirmação |
