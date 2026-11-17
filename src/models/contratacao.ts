@@ -12,6 +12,10 @@ export interface Orcamento {
   valor: number;
   /** Valor que o prestador enviou no orçamento, antes da negociação. */
   valorInicial: number;
+  /** Faixa de referência de preço da triagem (0 quando indisponível). */
+  referenciaMinima: number;
+  referenciaMaxima: number;
+  posicaoNaFaixa: PosicaoNaFaixa;
   prazoDias: number;
   observacao: string | null;
   status: StatusOrcamento;
@@ -20,6 +24,8 @@ export interface Orcamento {
   /** Proposta da negociação esperando resposta (null quando não há). */
   propostaPendente: Proposta | null;
 }
+
+export type PosicaoNaFaixa = 'Abaixo' | 'Dentro' | 'Acima' | 'SemReferencia';
 
 export type AutorProposta = 'Cliente' | 'Prestador';
 export type StatusProposta = 'Pendente' | 'Aceita' | 'Recusada' | 'Substituida';

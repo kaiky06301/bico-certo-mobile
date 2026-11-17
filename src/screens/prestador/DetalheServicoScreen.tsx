@@ -26,7 +26,7 @@ import {
   formatarMoeda,
   gerarChaveUnica,
 } from '../../utils/formatacao';
-import { esquemaOrcamento, validar } from '../../validation/esquemas';
+import { esquemaOrcamento, exigirJustificativa, validar } from '../../validation/esquemas';
 
 type Props = NativeStackScreenProps<PrestadorStackParams, 'DetalheServico'>;
 
@@ -96,6 +96,8 @@ export function DetalheServicoScreen({ route }: Props) {
   async function aoEnviar() {
     const dados = { valor: Number(valor.replace(',', '.')), prazoDias: Number(prazo) };
     const encontrados = await validar(esquemaOrcamento, dados);
+    const semMotivo = exigirJustificativa(dados.valor, pedido.data?.precoMaximo, observacao);
+    if (semMotivo) encontrados.observacao = semMotivo;
     setErros(encontrados);
     if (!Object.keys(encontrados).length) enviar.mutate();
   }
@@ -225,7 +227,7 @@ export function DetalheServicoScreen({ route }: Props) {
       ) : p.status === 'ABERTA' ? (
         <>
           <Titulo>Enviar orçamento</Titulo>
-          <Subtitulo>{`Preço justo para este serviço: ${formatarFaixa(p.precoMinimo, p.precoMaximo)}.`}</Subtitulo>
+          <Subtitulo>{`Faixa de referência para este serviço: ${formatarFaixa(p.precoMinimo, p.precoMaximo)}. Você pode cobrar mais, mas explique o motivo na observação.`}</Subtitulo>
           <Cartao>
             <CampoTexto
               rotulo="Valor (R$)"
@@ -249,6 +251,7 @@ export function DetalheServicoScreen({ route }: Props) {
               value={observacao}
               onChangeText={setObservacao}
               maxLength={500}
+              erro={erros.observacao}
             />
             {enviar.isError && <Text style={estilos.erro}>{mensagemDeErro(enviar.error)}</Text>}
             <Botao

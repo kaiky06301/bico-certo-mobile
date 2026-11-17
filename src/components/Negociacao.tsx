@@ -10,7 +10,7 @@ import { cores } from '../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../theme/tipografia';
 import { mensagemDeErro } from '../utils/erros';
 import { formatarDataHora, formatarMoeda, gerarChaveUnica } from '../utils/formatacao';
-import { esquemaProposta, validar } from '../validation/esquemas';
+import { esquemaProposta, exigirJustificativa, validar } from '../validation/esquemas';
 import { Botao } from './Botao';
 import { CampoTexto } from './CampoTexto';
 
@@ -18,7 +18,7 @@ interface Props {
   orcamento: Orcamento;
   /** Quem está usando a tela: o cliente dono do pedido ou o prestador que enviou o orçamento. */
   eu: AutorProposta;
-  /** Teto do preço justo (mostrado como dica no formulário). */
+  /** Fim da faixa de referência da triagem: acima dele o comentário passa a ser obrigatório. */
   precoMaximo?: number;
 }
 
@@ -81,6 +81,8 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
   async function aoEnviar() {
     const dados = { valor: Number(valor.replace(',', '.')), comentario };
     const encontrados = await validar(esquemaProposta, dados);
+    const semMotivo = exigirJustificativa(dados.valor, precoMaximo, comentario);
+    if (semMotivo && !encontrados.comentario) encontrados.comentario = semMotivo;
     setErros(encontrados);
     if (!Object.keys(encontrados).length) propor.mutate();
   }
@@ -101,6 +103,9 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
               {pendente.autorNome} propôs {formatarMoeda(pendente.valor)}
             </Text>
           </View>
+          {!!precoMaximo && pendente.valor > precoMaximo && (
+            <Text style={estilos.acimaFaixa}>Acima da faixa de referência</Text>
+          )}
           {!!pendente.comentario && (
             <Text style={estilos.comentario}>{`“${pendente.comentario}”`}</Text>
           )}
@@ -157,7 +162,8 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
           />
           {!!precoMaximo && (
             <Text style={estilos.dica}>
-              Pelo preço justo, propostas acima de {formatarMoeda(precoMaximo)} podem ser barradas.
+              Faixa de referência até {formatarMoeda(precoMaximo)}. Acima disso, explique o motivo
+              no comentário.
             </Text>
           )}
           {propor.isError && <Text style={estilos.erro}>{mensagemDeErro(propor.error)}</Text>}
@@ -255,6 +261,17 @@ const estilos = StyleSheet.create({
     marginTop: espacos.xs,
   },
   formulario: { marginTop: espacos.md },
+  acimaFaixa: {
+    alignSelf: 'flex-start',
+    fontFamily: fontes.media,
+    fontSize: tamanhos.pequeno,
+    color: cores.alerta,
+    backgroundColor: cores.alertaClaro,
+    borderRadius: raio.medio,
+    paddingHorizontal: espacos.sm,
+    paddingVertical: 2,
+    marginTop: espacos.xs,
+  },
   dica: {
     fontFamily: fontes.regular,
     fontSize: tamanhos.pequeno,

@@ -52,6 +52,15 @@ export const esquemaProposta = Yup.object({
   comentario: Yup.string().trim().max(300, 'Máximo de 300 caracteres'),
 });
 
+/**
+ * A faixa de referência da triagem não é um teto: dá para cobrar ou propor mais,
+ * mas aí é preciso explicar o motivo. Devolve a mensagem de erro ou undefined.
+ */
+export function exigirJustificativa(valor: number, maximo: number | undefined, texto: string) {
+  if (!maximo || !(valor > maximo) || texto.trim()) return undefined;
+  return 'Valor acima da faixa de referência: explique o motivo';
+}
+
 /** Valida e devolve um mapa campo -> primeira mensagem de erro (vazio quando esta tudo certo). */
 export async function validar<T extends object>(esquema: Yup.Schema<T>, dados: unknown) {
   try {

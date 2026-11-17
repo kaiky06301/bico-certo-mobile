@@ -20,7 +20,7 @@ interface Props {
   prestadoresDisponiveis?: number;
 }
 
-/** Resultado da triagem: o que a IA entendeu do problema e quanto e justo pagar. */
+/** Resultado da triagem: o que a IA entendeu do problema e a faixa de referência de preço. */
 export function CartaoTriagem(props: Props) {
   const urgencia = seloUrgencia[props.urgencia];
   return (
@@ -37,7 +37,7 @@ export function CartaoTriagem(props: Props) {
       <Selo texto={urgencia.texto} tom={urgencia.tom} />
 
       <View style={estilos.preco}>
-        <Text style={estilos.precoRotulo}>Preço justo para esse serviço</Text>
+        <Text style={estilos.precoRotulo}>Faixa de referência de preço</Text>
         <Text style={estilos.precoValor}>
           {formatarFaixa(props.precoMinimo, props.precoMaximo)}
         </Text>

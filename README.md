@@ -18,10 +18,11 @@ Quem precisa de um eletricista, encanador ou diarista na periferia depende de in
 
 No **Bico Certo**:
 1. O morador descreve o problema com as próprias palavras.
-2. O app mostra o que a **análise do Bico Certo** entendeu: tipo de serviço, urgência, **faixa de preço justo** e uma dica de segurança para seguir enquanto espera.
+2. O app mostra o que a **análise do Bico Certo** entendeu: tipo de serviço, urgência, **faixa de preço de referência** e uma dica de segurança para seguir enquanto espera.
 3. Os prestadores daquela área recebem um aviso e enviam **orçamentos**.
-4. Morador e prestador podem **negociar o valor**: qualquer um propõe outro preço com um comentário, e o outro aceita, recusa ou faz uma contraproposta. Se ninguém aceitar, vale o valor atual, e nunca acima do preço justo.
-5. O morador escolhe um orçamento, agenda a data e, no fim, **avalia** o prestador.
+4. Morador e prestador podem **negociar o valor**: qualquer um propõe outro preço com um comentário, e o outro aceita, recusa ou faz uma contraproposta. Se ninguém aceitar, vale o valor atual.
+5. A faixa de referência **não é um teto**: um serviço pode ter particularidades que justifiquem um valor maior. Mas, acima da faixa, quem propõe **precisa explicar o motivo**, e o morador vê o aviso "acima da faixa de referência" junto com a explicação.
+6. O morador escolhe um orçamento, agenda a data e, no fim, **avalia** o prestador.
 
 ---
 
@@ -32,7 +33,7 @@ No **Bico Certo**:
 | 1 | **Login** | público | Autenticação real com JWT na API Java |
 | 2 | **Cadastro** | público | Cria conta de cliente ou de prestador (com o serviço que oferece) |
 | 3 | **Novo pedido** | cliente | Descreve o problema → **análise com IA** (prévia) → confirma o pedido |
-| 4 | **Meus pedidos** | cliente | Lista com status, urgência e preço justo (puxar para atualizar) |
+| 4 | **Meus pedidos** | cliente | Lista com status, urgência e faixa de referência (puxar para atualizar) |
 | 5 | **Detalhe do pedido** | cliente | Orçamentos recebidos, **negociação de valor** (propor, aceitar, recusar, contrapropor e histórico), contratação com data, cancelar e avaliar com estrelas |
 | 6 | **Editar pedido** | cliente | Corrige a descrição; a análise é refeita |
 | 7 | **Pedidos abertos** | prestador | Pedidos da sua área esperando orçamento |

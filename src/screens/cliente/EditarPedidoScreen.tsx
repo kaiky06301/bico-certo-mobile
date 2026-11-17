@@ -59,8 +59,8 @@ function FormularioEdicao({ pedido, aoSalvar }: { pedido: Solicitacao; aoSalvar:
   return (
     <TelaFormulario>
       <Text style={estilos.aviso}>
-        Ao salvar, o problema é analisado de novo: a categoria, a urgência e o preço justo podem
-        mudar.
+        Ao salvar, o problema é analisado de novo: a categoria, a urgência e a faixa de preço de
+        referência podem mudar.
       </Text>
       <CampoTexto
         rotulo="Descrição do problema"

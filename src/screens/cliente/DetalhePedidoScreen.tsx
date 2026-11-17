@@ -16,7 +16,7 @@ import { Selo } from '../../components/Selo';
 import { seloContratacao, seloOrcamento, seloStatusPedido } from '../../components/selos';
 import { Subtitulo, Titulo } from '../../components/Titulo';
 import { chaves, useContratacoes, useOrcamentos, useSolicitacao } from '../../hooks/consultas';
-import { Orcamento } from '../../models/contratacao';
+import { Orcamento, PosicaoNaFaixa } from '../../models/contratacao';
 import { ClienteStackParams } from '../../navigation/tipos';
 import { aceitarOrcamento, alterarStatusContratacao } from '../../services/orcamentoService';
 import { avaliarSolicitacao, cancelarSolicitacao } from '../../services/solicitacaoService';
@@ -27,6 +27,13 @@ import { mensagemDeErro } from '../../utils/erros';
 import { formatarDataHora, formatarMoeda, gerarChaveUnica } from '../../utils/formatacao';
 
 type Props = NativeStackScreenProps<ClienteStackParams, 'DetalhePedido'>;
+
+const textoFaixa: Record<PosicaoNaFaixa, string> = {
+  Abaixo: ' · abaixo da faixa de referência',
+  Dentro: ' · dentro da faixa de referência',
+  Acima: ' · acima da faixa de referência',
+  SemReferencia: '',
+};
 
 export function DetalhePedidoScreen({ route, navigation }: Props) {
   const { id } = route.params;
@@ -192,7 +199,6 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
           )}
           {listaOrcamentos.map((orcamento) => {
             const selo = seloOrcamento[orcamento.status];
-            const acimaDoJusto = orcamento.valor > p.precoMaximo;
             return (
               <Cartao
                 key={orcamento.id}
@@ -205,10 +211,16 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                 <Text style={estilos.valor}>{formatarMoeda(orcamento.valor)}</Text>
                 <Text style={estilos.meta}>
                   Prazo: {orcamento.prazoDias} dia(s)
-                  {acimaDoJusto ? ' · um pouco acima da faixa justa' : ' · dentro do preço justo'}
+                  {textoFaixa[orcamento.posicaoNaFaixa]}
                 </Text>
+                {orcamento.posicaoNaFaixa === 'Acima' && (
+                  <Selo texto="Acima da faixa de referência" tom="alerta" />
+                )}
                 {!!orcamento.observacao && (
-                  <Text style={estilos.observacao}>{`“${orcamento.observacao}”`}</Text>
+                  <Text style={estilos.observacao}>
+                    {orcamento.posicaoNaFaixa === 'Acima' ? 'Motivo: ' : ''}
+                    {`“${orcamento.observacao}”`}
+                  </Text>
                 )}
                 {orcamento.status === 'Pendente' && escolhido?.id !== orcamento.id && (
                   <Negociacao orcamento={orcamento} eu="Cliente" precoMaximo={p.precoMaximo} />
