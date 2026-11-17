@@ -1,11 +1,25 @@
 import { Pagina } from '../models/pagina';
-import { Avaliacao, Solicitacao, SolicitacaoRequest, Triagem } from '../models/solicitacao';
+import {
+  Avaliacao,
+  FotoPedido,
+  Solicitacao,
+  SolicitacaoRequest,
+  Triagem,
+} from '../models/solicitacao';
 import { apiJava } from './httpClient';
 
 const BASE = '/api/solicitacoes';
 
-export async function simularTriagem(descricao: string): Promise<Triagem> {
-  const { data } = await apiJava.post<Triagem>(`${BASE}/triagem`, { descricao });
+export async function simularTriagem(dados: {
+  descricao: string;
+  observacao?: string;
+}): Promise<Triagem> {
+  const { data } = await apiJava.post<Triagem>(`${BASE}/triagem`, dados);
+  return data;
+}
+
+export async function listarFotos(id: number): Promise<FotoPedido[]> {
+  const { data } = await apiJava.get<FotoPedido[]>(`${BASE}/${id}/fotos`);
   return data;
 }
 

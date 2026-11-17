@@ -37,6 +37,9 @@ export interface Solicitacao {
   bairro: string;
   /** Rua e número: o dono sempre vê; o prestador só depois da contratação. */
   endereco: string | null;
+  /** Informação adicional opcional do morador. */
+  observacao: string | null;
+  quantidadeFotos: number;
   status: StatusSolicitacao;
   urgencia: Urgencia;
   categoria: CategoriaResumo;
@@ -56,6 +59,15 @@ export interface SolicitacaoRequest {
   bairro?: string;
   /** Endereço salvo: define o bairro e a rua do serviço. */
   enderecoId?: number;
+  observacao?: string;
+  /** Até 3 fotos em data URI base64. Na edição: sem o campo, as fotos atuais ficam. */
+  fotos?: string[];
+}
+
+export interface FotoPedido {
+  id: number;
+  ordem: number;
+  imagem: string;
 }
 
 export interface Avaliacao {

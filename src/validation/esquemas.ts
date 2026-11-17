@@ -77,6 +77,7 @@ export const esquemaPedido = Yup.object({
     .required('Descreva o problema')
     .min(10, 'Conte um pouco mais (mínimo de 10 caracteres)')
     .max(1000, 'Máximo de 1000 caracteres'),
+  observacao: Yup.string().trim().max(500, 'Máximo de 500 caracteres'),
 });
 
 export const esquemaOrcamento = Yup.object({

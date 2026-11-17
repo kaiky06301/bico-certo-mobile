@@ -38,11 +38,17 @@ function FormularioEdicao({ pedido, aoSalvar }: { pedido: Solicitacao; aoSalvar:
   const queryClient = useQueryClient();
   const [descricao, setDescricao] = useState(pedido.descricao);
   const [bairro, setBairro] = useState(pedido.bairro);
-  const [erroCampo, setErroCampo] = useState('');
+  const [observacao, setObservacao] = useState(pedido.observacao ?? '');
+  const [erros, setErros] = useState<Record<string, string>>({});
 
   const salvar = useMutation({
     mutationFn: () =>
-      atualizarSolicitacao(pedido.id, { descricao: descricao.trim(), bairro: bairro.trim() }),
+      // sem o campo "fotos", as fotos já enviadas continuam no pedido
+      atualizarSolicitacao(pedido.id, {
+        descricao: descricao.trim(),
+        bairro: bairro.trim(),
+        observacao: observacao.trim() || undefined,
+      }),
     onSuccess: (atualizado) => {
       queryClient.setQueryData(chaves.solicitacao(pedido.id), atualizado);
       queryClient.invalidateQueries({ queryKey: chaves.minhasSolicitacoes });
@@ -51,9 +57,9 @@ function FormularioEdicao({ pedido, aoSalvar }: { pedido: Solicitacao; aoSalvar:
   });
 
   async function aoConfirmar() {
-    const erros = await validar(esquemaPedido, { descricao });
-    setErroCampo(erros.descricao ?? '');
-    if (!erros.descricao) salvar.mutate();
+    const encontrados = await validar(esquemaPedido, { descricao, observacao });
+    setErros(encontrados);
+    if (!Object.keys(encontrados).length) salvar.mutate();
   }
 
   return (
@@ -67,8 +73,16 @@ function FormularioEdicao({ pedido, aoSalvar }: { pedido: Solicitacao; aoSalvar:
         multiline
         value={descricao}
         onChangeText={setDescricao}
-        erro={erroCampo}
+        erro={erros.descricao}
         maxLength={1000}
+      />
+      <CampoTexto
+        rotulo="Informação adicional (opcional)"
+        multiline
+        value={observacao}
+        onChangeText={setObservacao}
+        erro={erros.observacao}
+        maxLength={500}
       />
       <CampoTexto rotulo="Bairro" value={bairro} onChangeText={setBairro} />
       {salvar.isError && <Text style={estilos.erro}>{mensagemDeErro(salvar.error)}</Text>}

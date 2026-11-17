@@ -8,6 +8,7 @@ import { Botao } from '../../components/Botao';
 import { CampoTexto } from '../../components/CampoTexto';
 import { Cartao } from '../../components/Cartao';
 import { CartaoTriagem } from '../../components/CartaoTriagem';
+import { GaleriaFotos } from '../../components/GaleriaFotos';
 import { Carregando, MensagemErro } from '../../components/Estados';
 import { Estrelas } from '../../components/Estrelas';
 import { Negociacao } from '../../components/Negociacao';
@@ -148,6 +149,13 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
         <Selo texto={status.texto} tom={status.tom} />
       </View>
       <Text style={estilos.descricao}>{p.descricao}</Text>
+      {!!p.observacao && (
+        <Text style={estilos.infoAdicional}>
+          <Text style={estilos.observacaoRotulo}>Informação adicional: </Text>
+          {p.observacao}
+        </Text>
+      )}
+      <GaleriaFotos solicitacaoId={p.id} quantidade={p.quantidadeFotos ?? 0} />
       <Text style={estilos.meta}>
         {p.bairro} · aberto em {formatarDataHora(p.criadaEm)}
       </Text>
@@ -341,6 +349,13 @@ const estilos = StyleSheet.create({
   conteudo: { padding: espacos.md, paddingBottom: espacos.xl * 2 },
   topo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   numero: { fontFamily: fontes.seminegrito, fontSize: tamanhos.normal, color: cores.textoSuave },
+  infoAdicional: {
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.normal,
+    color: cores.textoSuave,
+    marginTop: espacos.sm,
+  },
+  observacaoRotulo: { fontFamily: fontes.seminegrito, color: cores.texto },
   descricao: {
     fontFamily: fontes.media,
     fontSize: tamanhos.medio,

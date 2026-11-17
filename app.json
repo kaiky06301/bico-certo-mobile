@@ -33,6 +33,13 @@
           "imageWidth": 180,
           "backgroundColor": "#F26B1D"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Bico Certo usa suas fotos para você mostrar o problema ao prestador.",
+          "cameraPermission": "O Bico Certo usa a câmera para você fotografar o problema."
+        }
       ]
     ],
     "scheme": "bicocerto",
