@@ -43,6 +43,13 @@
       ]
     ],
     "scheme": "bicocerto",
-    "primaryColor": "#F26B1D"
+    "primaryColor": "#F26B1D",
+    "extra": {
+      "commit": "ff5e445ab9b0629f8c6be5473f3b60bb4edbd4da",
+      "eas": {
+        "projectId": "a1aeb241-6863-4c7d-bab4-a3d836b9c920"
+      }
+    },
+    "owner": "kaiky06"
   }
 }
