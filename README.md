@@ -136,7 +136,7 @@ flowchart LR
 #    API Java na porta 8080 e API .NET na porta 5090
 
 # 2. App
-git clone LINK_DO_REPOSITORIO
+git clone https://github.com/kaiky06301/bico-certo-mobile.git
 cd bico-certo-mobile
 npm install
 npx expo start
