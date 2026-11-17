@@ -6,7 +6,6 @@ import { Alert, StyleSheet, Switch, Text, View } from 'react-native';
 import { Botao } from '../../components/Botao';
 import { CampoTexto } from '../../components/CampoTexto';
 import { Carregando } from '../../components/Estados';
-import { Opcoes } from '../../components/Opcoes';
 import { TelaFormulario } from '../../components/TelaFormulario';
 import { useAuth } from '../../contexts/AuthContext';
 import { chaves, useEnderecos } from '../../hooks/consultas';
@@ -16,8 +15,6 @@ import { cores } from '../../theme/cores';
 import { espacos, fontes, tamanhos } from '../../theme/tipografia';
 import { mensagemDeErro } from '../../utils/erros';
 import { esquemaEndereco, validar } from '../../validation/esquemas';
-
-const sugestoes = ['Casa', 'Casa dos pais', 'Trabalho', 'Imóvel alugado'];
 
 /** Cadastro e edição de endereço (aberto pelo Perfil ou pelo Novo pedido). */
 export function EnderecoFormScreen() {
@@ -92,15 +89,9 @@ function Formulario({ existente }: { existente?: Endereco }) {
 
   return (
     <TelaFormulario>
-      <Text style={estilos.rotulo}>Nome do endereço</Text>
-      <Opcoes<string>
-        opcoes={sugestoes.map((s) => ({ valor: s, rotulo: s }))}
-        selecionado={sugestoes.includes(apelido) ? apelido : undefined}
-        aoSelecionar={setApelido}
-      />
       <CampoTexto
-        rotulo="Ou escreva um nome"
-        placeholder="Ex.: Casa da vó"
+        rotulo="Nome do endereço"
+        placeholder="Ex.: Casa, Trabalho, Casa da vó"
         value={apelido}
         onChangeText={setApelido}
         maxLength={40}
@@ -174,12 +165,6 @@ function Formulario({ existente }: { existente?: Endereco }) {
 }
 
 const estilos = StyleSheet.create({
-  rotulo: {
-    fontFamily: fontes.media,
-    fontSize: tamanhos.normal,
-    color: cores.texto,
-    marginBottom: espacos.sm,
-  },
   duasColunas: { flexDirection: 'row', gap: espacos.sm },
   cidade: { flex: 1 },
   uf: { width: 80 },
