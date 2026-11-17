@@ -25,6 +25,13 @@ export interface Orcamento {
   propostaPendente: Proposta | null;
   /** O pedido já tem contratação ativa com outro prestador (explica o "Recusado"). */
   clienteContratouOutro: boolean;
+  /** Até quando o cliente pode aceitar ou negociar. */
+  validoAte: string | null;
+  expirado: boolean;
+  incluiMaoDeObra: boolean;
+  incluiMaterial: boolean;
+  incluiDeslocamento: boolean;
+  adicionais: string | null;
 }
 
 export type PosicaoNaFaixa = 'Abaixo' | 'Dentro' | 'Acima' | 'SemReferencia';
@@ -56,6 +63,11 @@ export interface OrcamentoRequest {
   valor: number;
   prazoDias: number;
   observacao?: string;
+  validadeDias?: number;
+  incluiMaoDeObra?: boolean;
+  incluiMaterial?: boolean;
+  incluiDeslocamento?: boolean;
+  adicionais?: string;
 }
 
 export interface Contratacao {

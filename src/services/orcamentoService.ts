@@ -30,6 +30,18 @@ export async function listarOrcamentos(solicitacaoId?: number): Promise<Pagina<O
   return data;
 }
 
+/** Prestador retira (desiste de) um orçamento ainda pendente. */
+export async function retirarOrcamento(id: number): Promise<void> {
+  await apiNet.delete(`/api/orcamentos/${id}`);
+}
+
+export async function reagendarContratacao(id: number, dataAgendada: string): Promise<Contratacao> {
+  const { data } = await apiNet.put<Contratacao>(`/api/contratacoes/${id}/agendamento`, {
+    dataAgendada,
+  });
+  return data;
+}
+
 /** Cliente recusa um orçamento pendente do seu pedido. */
 export async function recusarOrcamento(id: number): Promise<Orcamento> {
   const { data } = await apiNet.patch<Orcamento>(`/api/orcamentos/${id}/recusa`);

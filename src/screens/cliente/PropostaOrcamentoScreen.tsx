@@ -7,6 +7,7 @@ import { Botao } from '../../components/Botao';
 import { Cartao } from '../../components/Cartao';
 import { CartaoAvaliacao } from '../../components/CartaoAvaliacao';
 import { Carregando, MensagemErro } from '../../components/Estados';
+import { CondicoesOrcamento } from '../../components/CondicoesOrcamento';
 import { Negociacao } from '../../components/Negociacao';
 import { Opcoes } from '../../components/Opcoes';
 import { ResumoPrestador } from '../../components/ResumoPrestador';
@@ -171,6 +172,9 @@ export function PropostaOrcamentoScreen({ route, navigation }: Props) {
           </>
         )}
 
+        <View style={estilos.divisor} />
+        <CondicoesOrcamento orcamento={orcamento} />
+
         {pendente && (
           <>
             <View style={estilos.divisor} />
@@ -180,7 +184,7 @@ export function PropostaOrcamentoScreen({ route, navigation }: Props) {
       </Cartao>
 
       {/* decisão */}
-      {pendente && !agendando && (
+      {pendente && !orcamento.expirado && !agendando && (
         <View style={estilos.acoes}>
           <Botao
             titulo={`Aceitar por ${formatarMoeda(orcamento.valor)}`}

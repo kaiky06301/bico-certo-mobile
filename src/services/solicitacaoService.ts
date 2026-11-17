@@ -98,3 +98,9 @@ export async function registrarContratacao(
   });
   return data;
 }
+
+/** Prestador contratado desiste: o pedido volta a ficar aberto para o cliente escolher outro orçamento. */
+export async function desistirSolicitacao(id: number): Promise<Solicitacao> {
+  const { data } = await apiJava.patch<Solicitacao>(`${BASE}/${id}/desistencia`);
+  return data;
+}

@@ -5,21 +5,36 @@ import { ComponentRef, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { distanciaKm, textoDistancia } from '../../utils/distancia';
 import { seloDoPrestador, situacaoDoPrestador } from '../../utils/situacaoPrestador';
-import { Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  Linking,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from 'react-native';
 
 import { Botao } from '../../components/Botao';
 import { CampoTexto } from '../../components/CampoTexto';
 import { Cartao } from '../../components/Cartao';
 import { CartaoTriagem } from '../../components/CartaoTriagem';
+import { CondicoesOrcamento } from '../../components/CondicoesOrcamento';
+import { Opcoes } from '../../components/Opcoes';
 import { GaleriaFotos } from '../../components/GaleriaFotos';
 import { Carregando, MensagemErro } from '../../components/Estados';
 import { Negociacao } from '../../components/Negociacao';
 import { Selo } from '../../components/Selo';
-import { seloContratacao, seloOrcamento, seloStatusPedido } from '../../components/selos';
+import { seloContratacao, seloStatusPedido } from '../../components/selos';
 import { Subtitulo, Titulo } from '../../components/Titulo';
 import { chaves, useContratacoes, useOrcamentos, useSolicitacao } from '../../hooks/consultas';
 import { PrestadorStackParams } from '../../navigation/tipos';
-import { alterarStatusContratacao, enviarOrcamento } from '../../services/orcamentoService';
+import {
+  alterarStatusContratacao,
+  enviarOrcamento,
+  retirarOrcamento,
+} from '../../services/orcamentoService';
 import { assumirSolicitacao, concluirSolicitacao } from '../../services/solicitacaoService';
 import { cores } from '../../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../../theme/tipografia';
@@ -50,6 +65,11 @@ export function DetalheServicoScreen({ route }: Props) {
   const [valor, setValor] = useState('');
   const [prazo, setPrazo] = useState('1');
   const [observacao, setObservacao] = useState('');
+  const [validadeDias, setValidadeDias] = useState(7);
+  const [maoDeObra, setMaoDeObra] = useState(true);
+  const [material, setMaterial] = useState(false);
+  const [deslocamento, setDeslocamento] = useState(true);
+  const [adicionais, setAdicionais] = useState('');
   const [erros, setErros] = useState<Record<string, string>>({});
   const chaveOrcamento = useRef(gerarChaveUnica());
   const { usuario } = useAuth();
@@ -76,6 +96,11 @@ export function DetalheServicoScreen({ route }: Props) {
           valor: Number(valor.replace(',', '.')),
           prazoDias: Number(prazo),
           observacao: observacao.trim() || undefined,
+          validadeDias,
+          incluiMaoDeObra: maoDeObra,
+          incluiMaterial: material,
+          incluiDeslocamento: deslocamento,
+          adicionais: adicionais.trim() || undefined,
         },
         chaveOrcamento.current,
       ),
@@ -83,6 +108,12 @@ export function DetalheServicoScreen({ route }: Props) {
       chaveOrcamento.current = gerarChaveUnica();
       atualizarTudo();
     },
+  });
+
+  const retirar = useMutation({
+    mutationFn: () => retirarOrcamento(meuOrcamento!.id),
+    onSuccess: atualizarTudo,
+    onError: (e) => Alert.alert('Não foi possível desistir', mensagemDeErro(e)),
   });
 
   const iniciar = useMutation({
@@ -266,12 +297,15 @@ export function DetalheServicoScreen({ route }: Props) {
           <Cartao>
             <View style={estilos.linha}>
               <Text style={estilos.valor}>{formatarMoeda(meuOrcamento.valor)}</Text>
-              <Selo
-                texto={seloOrcamento[meuOrcamento.status].texto}
-                tom={seloOrcamento[meuOrcamento.status].tom}
-              />
+              <Selo texto={seloDoPrestador[situacao].texto} tom={seloDoPrestador[situacao].tom} />
             </View>
-            <Text style={estilos.meta}>Prazo de {meuOrcamento.prazoDias} dia(s)</Text>
+            <Text style={estilos.meta}>
+              Prazo de {meuOrcamento.prazoDias} {meuOrcamento.prazoDias === 1 ? 'dia' : 'dias'}
+            </Text>
+            {!!meuOrcamento.observacao && (
+              <Text style={estilos.meta}>{`“${meuOrcamento.observacao}”`}</Text>
+            )}
+            <CondicoesOrcamento orcamento={meuOrcamento} />
             <Text style={estilos.meta}>
               {situacao === 'outroContratado'
                 ? 'O cliente escolheu outro prestador desta vez.'
@@ -283,6 +317,24 @@ export function DetalheServicoScreen({ route }: Props) {
             </Text>
             {meuOrcamento.status === 'Pendente' && (
               <Negociacao orcamento={meuOrcamento} eu="Prestador" precoMaximo={p.precoMaximo} />
+            )}
+            {meuOrcamento.status === 'Pendente' && (
+              <Botao
+                titulo="Desistir deste orçamento"
+                variante="contorno"
+                estilo={estilos.botao}
+                carregando={retirar.isPending}
+                aoPressionar={() =>
+                  Alert.alert(
+                    'Desistir do orçamento?',
+                    'O orçamento é retirado e o cliente é avisado. O pedido volta para as suas oportunidades.',
+                    [
+                      { text: 'Voltar', style: 'cancel' },
+                      { text: 'Desistir', style: 'destructive', onPress: () => retirar.mutate() },
+                    ],
+                  )
+                }
+              />
             )}
           </Cartao>
         </>
@@ -322,6 +374,27 @@ export function DetalheServicoScreen({ route }: Props) {
               onChangeText={setPrazo}
               erro={erros.prazoDias}
             />
+            <Text style={estilos.rotuloAtalho}>O que está incluso no valor</Text>
+            <ItemInclusao rotulo="Mão de obra" valor={maoDeObra} aoMudar={setMaoDeObra} />
+            <ItemInclusao rotulo="Material" valor={material} aoMudar={setMaterial} />
+            <ItemInclusao rotulo="Deslocamento" valor={deslocamento} aoMudar={setDeslocamento} />
+            <CampoTexto
+              rotulo="Serviços adicionais (opcional)"
+              placeholder="Ex.: revisão do quadro de luz"
+              value={adicionais}
+              onChangeText={setAdicionais}
+              maxLength={200}
+            />
+            <Text style={estilos.rotuloAtalho}>Validade da proposta</Text>
+            <Opcoes<number>
+              opcoes={[
+                { valor: 3, rotulo: '3 dias' },
+                { valor: 7, rotulo: '7 dias' },
+                { valor: 15, rotulo: '15 dias' },
+              ]}
+              selecionado={validadeDias}
+              aoSelecionar={setValidadeDias}
+            />
             <CampoTexto
               rotulo="Observação (opcional)"
               multiline
@@ -344,6 +417,20 @@ export function DetalheServicoScreen({ route }: Props) {
   );
 }
 
+function ItemInclusao(props: { rotulo: string; valor: boolean; aoMudar: (v: boolean) => void }) {
+  return (
+    <View style={estilos.inclusao}>
+      <Text style={estilos.inclusaoTexto}>{props.rotulo}</Text>
+      <Switch
+        value={props.valor}
+        onValueChange={props.aoMudar}
+        accessibilityLabel={`${props.rotulo} incluso`}
+        trackColor={{ true: cores.sucesso, false: cores.borda }}
+      />
+    </View>
+  );
+}
+
 function InfoLinha({ icone, texto }: { icone: keyof typeof Ionicons.glyphMap; texto: string }) {
   return (
     <View style={estilos.infoLinha}>
@@ -363,6 +450,13 @@ const estilos = StyleSheet.create({
     color: cores.texto,
   },
   ctaTopo: { marginVertical: espacos.sm },
+  inclusao: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minHeight: 44,
+  },
+  inclusaoTexto: { fontFamily: fontes.regular, fontSize: tamanhos.normal, color: cores.texto },
   rotuloAtalho: {
     fontFamily: fontes.media,
     fontSize: tamanhos.pequeno,

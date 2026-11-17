@@ -40,11 +40,12 @@ const situacoesDoFiltro: Record<Filtro, SituacaoPrestador[]> = {
     'concluido',
     'outroContratado',
     'recusado',
+    'expirado',
   ],
   aguardando: ['enviado'],
   negociacao: ['negociacao', 'suaVez'],
   contratados: ['contratado', 'execucao', 'concluido'],
-  encerrados: ['outroContratado', 'recusado'],
+  encerrados: ['outroContratado', 'recusado', 'expirado'],
 };
 
 /** Meus orçamentos: tudo o que o prestador já orçou, com a situação de cada negociação. */
@@ -165,6 +166,7 @@ function CartaoOrcamento({
   else if (situacao === 'concluido') passo = 'Serviço concluído.';
   else if (situacao === 'outroContratado') passo = 'O cliente escolheu outro prestador desta vez.';
   else if (situacao === 'recusado') passo = 'O cliente recusou este orçamento.';
+  else if (situacao === 'expirado') passo = 'A proposta expirou. Abra o pedido para renovar.';
 
   const destaque = situacao === 'suaVez' || situacao === 'contratado';
 

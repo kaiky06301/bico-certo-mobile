@@ -4,12 +4,12 @@ import { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { usePropostas } from '../hooks/consultas';
-import { AutorProposta, Orcamento, StatusProposta } from '../models/contratacao';
+import { AutorProposta, Orcamento, Proposta } from '../models/contratacao';
 import { enviarProposta, responderProposta } from '../services/orcamentoService';
 import { cores } from '../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../theme/tipografia';
 import { mensagemDeErro } from '../utils/erros';
-import { formatarDataHora, formatarMoeda, gerarChaveUnica } from '../utils/formatacao';
+import { formatarMoeda, formatarQuando, gerarChaveUnica } from '../utils/formatacao';
 import { esquemaProposta, exigirJustificativa, validar } from '../validation/esquemas';
 import { Botao } from './Botao';
 import { CampoTexto } from './CampoTexto';
@@ -22,12 +22,42 @@ interface Props {
   precoMaximo?: number;
 }
 
-const textoStatus: Record<StatusProposta, string> = {
-  Pendente: 'esperando resposta',
-  Aceita: 'aceita',
-  Recusada: 'recusada',
-  Substituida: 'trocada por outra proposta',
-};
+interface EventoNegociacao {
+  quando: string;
+  texto: string;
+  comentario?: string | null;
+  tom: 'neutro' | 'sucesso' | 'perigo';
+}
+
+/** Linha do tempo: orçamento enviado, cada proposta e cada resposta, em ordem. */
+function montarLinhaDoTempo(orcamento: Orcamento, propostas: Proposta[], eu: AutorProposta) {
+  const nomeDe = (autor: AutorProposta) =>
+    autor === eu ? 'Você' : autor === 'Cliente' ? 'O cliente' : orcamento.prestadorNome;
+  const eventos: EventoNegociacao[] = [
+    {
+      quando: orcamento.criadoEm,
+      texto: `${nomeDe('Prestador')} enviou o orçamento de ${formatarMoeda(orcamento.valorInicial)}`,
+      tom: 'neutro',
+    },
+  ];
+  for (const p of propostas) {
+    eventos.push({
+      quando: p.criadaEm,
+      texto: `${nomeDe(p.autor)} ${p.autor === 'Cliente' && p.autor !== eu ? 'pediu' : 'propôs'} ${formatarMoeda(p.valor)}${p.status === 'Substituida' ? ' (substituída por outra proposta)' : ''}`,
+      comentario: p.comentario,
+      tom: 'neutro',
+    });
+    if (p.respondidaEm && (p.status === 'Aceita' || p.status === 'Recusada')) {
+      const quemRespondeu: AutorProposta = p.autor === 'Cliente' ? 'Prestador' : 'Cliente';
+      eventos.push({
+        quando: p.respondidaEm,
+        texto: `${nomeDe(quemRespondeu)} ${p.status === 'Aceita' ? 'aceitou' : 'recusou'} ${formatarMoeda(p.valor)}`,
+        tom: p.status === 'Aceita' ? 'sucesso' : 'perigo',
+      });
+    }
+  }
+  return eventos.sort((a, b) => a.quando.localeCompare(b.quando));
+}
 
 /**
  * Negociação do valor de um orçamento: quem recebe uma proposta pode aceitar, recusar ou mandar outra.
@@ -48,6 +78,7 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
   const recebida = pendente && pendente.autor !== eu;
   const enviadaPorMim = pendente && pendente.autor === eu;
   const outraParte = eu === 'Cliente' ? 'o prestador' : 'o cliente';
+  const expirado = orcamento.expirado;
 
   function atualizar() {
     // ['orcamentos'] cobre a lista de orçamentos do pedido e o histórico da negociação
@@ -95,7 +126,15 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
         </Text>
       )}
 
-      {recebida && (
+      {expirado && (
+        <Text style={estilos.expirado}>
+          {eu === 'Prestador'
+            ? 'Este orçamento expirou. Edite o orçamento para renovar a validade e continuar negociando.'
+            : 'Este orçamento expirou. Peça ao prestador para renovar ou escolha outro orçamento.'}
+        </Text>
+      )}
+
+      {recebida && !expirado && (
         <View style={estilos.recebida}>
           <View style={estilos.linha}>
             <Ionicons name="chatbubbles-outline" size={18} color={cores.primariaEscura} />
@@ -150,10 +189,14 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
             erro={erros.valor}
           />
           <CampoTexto
-            rotulo="Comentário (opcional)"
+            rotulo={
+              eu === 'Prestador' ? 'Por que mudou o valor? (opcional)' : 'Comentário (opcional)'
+            }
             multiline
             placeholder={
-              eu === 'Cliente' ? 'Ex.: eu já tenho o material' : 'Ex.: inclui a troca da peça'
+              eu === 'Cliente'
+                ? 'Ex.: eu já tenho o material'
+                : 'Ex.: precisa trocar uma peça que não estava prevista'
             }
             value={comentario}
             onChangeText={setComentario}
@@ -175,7 +218,7 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
             aoPressionar={() => setFormularioAberto(false)}
           />
         </View>
-      ) : (
+      ) : expirado ? null : (
         <Botao
           titulo={recebida ? 'Fazer contraproposta' : 'Propor outro valor'}
           variante="secundaria"
@@ -192,29 +235,33 @@ export function Negociacao({ orcamento, eu, precoMaximo }: Props) {
         style={estilos.linkHistorico}
         onPress={() => setHistoricoAberto((aberto) => !aberto)}
       >
-        {historicoAberto ? 'Esconder negociação' : 'Ver histórico da negociação'}
+        {historicoAberto ? 'Esconder histórico' : 'Ver histórico da negociação'}
       </Text>
       {historicoAberto && (
         <View style={estilos.historico}>
           {historico.isLoading && <Text style={estilos.dica}>Carregando...</Text>}
+          {historico.data &&
+            montarLinhaDoTempo(orcamento, historico.data, eu).map((e, i) => (
+              <View key={`${e.quando}-${i}`} style={estilos.itemHistorico}>
+                <View
+                  style={[
+                    estilos.ponto,
+                    e.tom === 'sucesso' && { backgroundColor: cores.sucesso },
+                    e.tom === 'perigo' && { backgroundColor: cores.perigo },
+                  ]}
+                />
+                <View style={estilos.itemTextos}>
+                  <Text style={estilos.itemData}>{formatarQuando(e.quando)}</Text>
+                  <Text style={estilos.itemTitulo}>{e.texto}</Text>
+                  {!!e.comentario && <Text style={estilos.comentario}>{`“${e.comentario}”`}</Text>}
+                </View>
+              </View>
+            ))}
           {historico.data?.length === 0 && (
             <Text style={estilos.dica}>
-              Ainda não houve negociação. Vale o valor de {formatarMoeda(orcamento.valor)}.
+              Ainda não houve contraproposta. Vale o valor de {formatarMoeda(orcamento.valor)}.
             </Text>
           )}
-          {historico.data?.map((proposta) => (
-            <View key={proposta.id} style={estilos.itemHistorico}>
-              <Text style={estilos.itemTitulo}>
-                {proposta.autor === eu ? 'Você' : proposta.autorNome}:{' '}
-                {formatarMoeda(proposta.valor)}{' '}
-                <Text style={estilos.itemStatus}>({textoStatus[proposta.status]})</Text>
-              </Text>
-              {!!proposta.comentario && (
-                <Text style={estilos.comentario}>{`“${proposta.comentario}”`}</Text>
-              )}
-              <Text style={estilos.itemData}>{formatarDataHora(proposta.criadaEm)}</Text>
-            </View>
-          ))}
         </View>
       )}
     </View>
@@ -298,8 +345,25 @@ const estilos = StyleSheet.create({
     paddingLeft: espacos.sm,
     gap: espacos.sm,
   },
-  itemHistorico: {},
-  itemTitulo: { fontFamily: fontes.media, fontSize: tamanhos.pequeno, color: cores.texto },
-  itemStatus: { fontFamily: fontes.regular, color: cores.textoSuave },
+  itemHistorico: { flexDirection: 'row', gap: espacos.sm },
+  ponto: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: cores.secundaria,
+    marginTop: 5,
+    marginLeft: -espacos.sm - 6,
+  },
+  itemTextos: { flex: 1 },
+  itemTitulo: { fontFamily: fontes.media, fontSize: tamanhos.normal, color: cores.texto },
+  expirado: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.pequeno,
+    color: cores.perigo,
+    backgroundColor: cores.perigoClaro,
+    borderRadius: raio.medio,
+    padding: espacos.sm,
+    marginTop: espacos.xs,
+  },
   itemData: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave },
 });
