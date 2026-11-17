@@ -7,7 +7,7 @@
 |---|---|
 | **Repositório deste app** | https://github.com/kaiky06301/bico-certo-mobile |
 | **Vídeo (até 5 min)** | `LINK_DO_VIDEO` |
-| **Publicação (Firebase App Distribution)** | `LINK_DO_FIREBASE` |
+| **Publicação (Firebase App Distribution)** | https://appdistribution.firebase.google.com/testerapps/1:1003296105104:android:527de04e9a3d6787596e15 (APK do commit `b8e7c0f`, professor cadastrado como tester) |
 | **API Java (usuários, pedidos e triagem com IA)** | https://github.com/kaiky06301/bico-certo-java |
 | **API .NET (orçamentos e contratações)** | https://github.com/kaiky06301/bico-certo-dotnet |
 | **APIs no ar (Render)** | Java: https://bico-certo-api.onrender.com · .NET: https://bico-certo-dotnet.onrender.com |
