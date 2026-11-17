@@ -28,6 +28,7 @@ export type ClienteStackParams = {
   ClienteAbas: NavigatorScreenParams<ClienteAbasParams>;
   DetalhePedido: { id: number };
   EditarPedido: { id: number };
+  PropostaOrcamento: { solicitacaoId: number; orcamentoId: number };
   MinhasAvaliacoes: undefined;
 } & TelasDaConta;
 

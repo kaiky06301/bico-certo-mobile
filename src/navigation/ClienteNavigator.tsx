@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useNaoLidas } from '../hooks/consultas';
+import { PropostaOrcamentoScreen } from '../screens/cliente/PropostaOrcamentoScreen';
 import { DetalhePedidoScreen } from '../screens/cliente/DetalhePedidoScreen';
 import { EditarPedidoScreen } from '../screens/cliente/EditarPedidoScreen';
 import { MinhasAvaliacoesScreen } from '../screens/cliente/MinhasAvaliacoesScreen';
@@ -90,6 +91,11 @@ export function ClienteNavigator() {
         name="MinhasAvaliacoes"
         component={MinhasAvaliacoesScreen}
         options={{ title: 'Minhas avaliações' }}
+      />
+      <Pilha.Screen
+        name="PropostaOrcamento"
+        component={PropostaOrcamentoScreen}
+        options={{ title: 'Proposta' }}
       />
       <Pilha.Screen name="Sobre" component={SobreScreen} options={{ title: 'Sobre o app' }} />
       <Pilha.Screen

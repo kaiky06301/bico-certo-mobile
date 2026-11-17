@@ -41,6 +41,8 @@ export interface Solicitacao {
   observacao: string | null;
   quantidadeFotos: number;
   status: StatusSolicitacao;
+  /** Motivo informado pelo cliente quando cancelou (null nos outros casos). */
+  motivoCancelamento: string | null;
   urgencia: Urgencia;
   categoria: CategoriaResumo;
   precoMinimo: number;

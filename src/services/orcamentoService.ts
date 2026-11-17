@@ -30,6 +30,12 @@ export async function listarOrcamentos(solicitacaoId?: number): Promise<Pagina<O
   return data;
 }
 
+/** Cliente recusa um orçamento pendente do seu pedido. */
+export async function recusarOrcamento(id: number): Promise<Orcamento> {
+  const { data } = await apiNet.patch<Orcamento>(`/api/orcamentos/${id}/recusa`);
+  return data;
+}
+
 export async function aceitarOrcamento(
   dados: ContratacaoRequest,
   chave: string,

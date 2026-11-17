@@ -62,8 +62,8 @@ export async function atualizarSolicitacao(
   return data;
 }
 
-export async function cancelarSolicitacao(id: number): Promise<void> {
-  await apiJava.delete(`${BASE}/${id}`);
+export async function cancelarSolicitacao(id: number, motivo?: string): Promise<void> {
+  await apiJava.delete(`${BASE}/${id}`, { params: { motivo } });
 }
 
 export async function assumirSolicitacao(id: number): Promise<Solicitacao> {

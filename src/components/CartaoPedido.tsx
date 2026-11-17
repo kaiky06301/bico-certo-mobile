@@ -6,16 +6,34 @@ import { cores } from '../theme/cores';
 import { espacos, fontes, tamanhos } from '../theme/tipografia';
 import { formatarData, formatarFaixa } from '../utils/formatacao';
 import { Cartao } from './Cartao';
-import { Selo } from './Selo';
+import { Selo, TomSelo } from './Selo';
 import { seloStatusPedido, seloUrgencia } from './selos';
+
+/** Próximo passo mostrado no cartão (ex.: "3 orçamentos recebidos", "Avalie o prestador"). */
+export interface ProximoPasso {
+  texto: string;
+  icone: keyof typeof Ionicons.glyphMap;
+  destaque?: boolean;
+}
 
 interface Props {
   pedido: Solicitacao;
   aoPressionar: () => void;
+  /** Selo calculado com a contratação (cliente); sem ele vale o status do pedido. */
+  situacao?: { texto: string; tom: TomSelo };
+  proximoPasso?: ProximoPasso;
+  /** Valor combinado (substitui a faixa de referência depois da contratação). */
+  valorCombinado?: string;
 }
 
-export function CartaoPedido({ pedido, aoPressionar }: Props) {
-  const status = seloStatusPedido[pedido.status];
+export function CartaoPedido({
+  pedido,
+  aoPressionar,
+  situacao,
+  proximoPasso,
+  valorCombinado,
+}: Props) {
+  const status = situacao ?? seloStatusPedido[pedido.status];
   const urgencia = seloUrgencia[pedido.urgencia];
 
   return (
@@ -35,9 +53,29 @@ export function CartaoPedido({ pedido, aoPressionar }: Props) {
         </View>
       </View>
       <View style={estilos.rodape}>
-        <Text style={estilos.preco}>{formatarFaixa(pedido.precoMinimo, pedido.precoMaximo)}</Text>
+        <Text style={estilos.preco}>
+          {valorCombinado ?? formatarFaixa(pedido.precoMinimo, pedido.precoMaximo)}
+        </Text>
         <Text style={estilos.textoInfo}>{formatarData(pedido.criadaEm)}</Text>
       </View>
+      {proximoPasso && (
+        <View style={[estilos.passo, proximoPasso.destaque && estilos.passoDestaque]}>
+          <Ionicons
+            name={proximoPasso.icone}
+            size={16}
+            color={proximoPasso.destaque ? cores.primariaEscura : cores.textoSuave}
+          />
+          <Text
+            style={[estilos.passoTexto, proximoPasso.destaque && estilos.passoTextoDestaque]}
+            numberOfLines={2}
+          >
+            {proximoPasso.texto}
+          </Text>
+          {proximoPasso.destaque && (
+            <Ionicons name="chevron-forward" size={16} color={cores.primariaEscura} />
+          )}
+        </View>
+      )}
     </Cartao>
   );
 }
@@ -69,5 +107,27 @@ const estilos = StyleSheet.create({
   },
   info: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   textoInfo: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave },
+  passo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: espacos.xs,
+    marginTop: espacos.sm,
+    paddingTop: espacos.sm,
+    borderTopWidth: 1,
+    borderTopColor: cores.borda,
+  },
+  passoDestaque: {
+    backgroundColor: cores.primariaClara,
+    borderTopWidth: 0,
+    borderRadius: 10,
+    padding: espacos.sm,
+  },
+  passoTexto: {
+    flex: 1,
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.pequeno,
+    color: cores.textoSuave,
+  },
+  passoTextoDestaque: { fontFamily: fontes.seminegrito, color: cores.primariaEscura },
   preco: { fontFamily: fontes.seminegrito, fontSize: tamanhos.normal, color: cores.primariaEscura },
 });

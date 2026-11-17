@@ -19,7 +19,7 @@ export const seloUrgencia: Record<Urgencia, { texto: string; tom: TomSelo }> = {
 export const seloOrcamento: Record<StatusOrcamento, { texto: string; tom: TomSelo }> = {
   Pendente: { texto: 'Aguardando resposta', tom: 'primario' },
   Aceito: { texto: 'Aceito', tom: 'sucesso' },
-  Recusado: { texto: 'Não escolhido', tom: 'neutro' },
+  Recusado: { texto: 'Recusado', tom: 'neutro' },
 };
 
 export const seloContratacao: Record<StatusContratacao, { texto: string; tom: TomSelo }> = {

@@ -1,120 +1,85 @@
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useMemo, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Alert, Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Botao } from '../../components/Botao';
 import { CampoTexto } from '../../components/CampoTexto';
 import { Cartao } from '../../components/Cartao';
 import { CartaoTriagem } from '../../components/CartaoTriagem';
-import { GaleriaFotos } from '../../components/GaleriaFotos';
 import { Carregando, MensagemErro } from '../../components/Estados';
 import { Estrelas } from '../../components/Estrelas';
-import { Negociacao } from '../../components/Negociacao';
-import { Opcoes } from '../../components/Opcoes';
+import { GaleriaFotos } from '../../components/GaleriaFotos';
+import { HistoricoPedido } from '../../components/HistoricoPedido';
+import { ModalCancelamento } from '../../components/ModalCancelamento';
+import { OrcamentosRecebidos } from '../../components/OrcamentosRecebidos';
+import { ResumoPrestador } from '../../components/ResumoPrestador';
 import { Selo } from '../../components/Selo';
-import { seloContratacao, seloOrcamento, seloStatusPedido } from '../../components/selos';
-import { Subtitulo, Titulo } from '../../components/Titulo';
-import { chaves, useContratacoes, useOrcamentos, useSolicitacao } from '../../hooks/consultas';
-import { Orcamento, PosicaoNaFaixa } from '../../models/contratacao';
-import { ClienteStackParams } from '../../navigation/tipos';
-import { aceitarOrcamento, alterarStatusContratacao } from '../../services/orcamentoService';
+import { seloContratacao } from '../../components/selos';
 import {
-  avaliarSolicitacao,
-  cancelarSolicitacao,
-  registrarContratacao,
-} from '../../services/solicitacaoService';
+  chaves,
+  useContratacoes,
+  useMinhasAvaliacoes,
+  useOrcamentos,
+  useSolicitacao,
+} from '../../hooks/consultas';
+import { ClienteStackParams } from '../../navigation/tipos';
+import { alterarStatusContratacao } from '../../services/orcamentoService';
+import { avaliarSolicitacao, cancelarSolicitacao } from '../../services/solicitacaoService';
 import { cores } from '../../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../../theme/tipografia';
-import { opcoesDeAgendamento } from '../../utils/agenda';
 import { mensagemDeErro } from '../../utils/erros';
-import { formatarDataHora, formatarMoeda, gerarChaveUnica } from '../../utils/formatacao';
+import { formatarDataHora, formatarMoeda } from '../../utils/formatacao';
+import { contratacaoDoPedido, etapaDoPedido, seloDaEtapa } from '../../utils/situacaoPedido';
 
 type Props = NativeStackScreenProps<ClienteStackParams, 'DetalhePedido'>;
 
-const textoFaixa: Record<PosicaoNaFaixa, string> = {
-  Abaixo: ' · abaixo da faixa de referência',
-  Dentro: ' · dentro da faixa de referência',
-  Acima: ' · acima da faixa de referência',
-  SemReferencia: '',
-};
-
+/**
+ * Detalhe do pedido do cliente. A estrutura é a mesma; o conteúdo muda com a etapa:
+ * orçamentos (comparar e negociar) → contratado/em execução (prestador, valor, agenda, contato)
+ * → concluído (valor pago e avaliação) ou cancelado (motivo). O histórico fica sempre no fim.
+ */
 export function DetalhePedidoScreen({ route, navigation }: Props) {
   const { id } = route.params;
   const queryClient = useQueryClient();
   const pedido = useSolicitacao(id);
   const orcamentos = useOrcamentos(id);
   const contratacoes = useContratacoes();
+  const minhasAvaliacoes = useMinhasAvaliacoes();
 
-  const [escolhido, setEscolhido] = useState<Orcamento | null>(null);
-  const [dataAgendada, setDataAgendada] = useState<string>();
+  const [cancelando, setCancelando] = useState(false);
   const [nota, setNota] = useState(5);
   const [comentario, setComentario] = useState('');
-  const [avaliado, setAvaliado] = useState(false);
-  // Mesma chave enquanto o cliente estiver confirmando o MESMO orcamento: um reenvio nao duplica a contratacao
-  const chaveContratacao = useRef(gerarChaveUnica());
-  const datas = useMemo(() => opcoesDeAgendamento(), []);
 
-  const contratacao = contratacoes.data?.conteudo.find(
-    (c) => c.solicitacaoId === id && c.status !== 'Cancelada',
-  );
+  const contratacao = contratacaoDoPedido(id, contratacoes.data?.conteudo);
+  const avaliacao = minhasAvaliacoes.data?.conteudo.find((a) => a.solicitacaoId === id);
 
   function atualizarTudo() {
     queryClient.invalidateQueries({ queryKey: chaves.solicitacao(id) });
-    queryClient.invalidateQueries({ queryKey: chaves.orcamentos(id) });
+    queryClient.invalidateQueries({ queryKey: ['orcamentos'] });
     queryClient.invalidateQueries({ queryKey: chaves.contratacoes });
     queryClient.invalidateQueries({ queryKey: chaves.minhasSolicitacoes });
   }
 
-  const contratar = useMutation({
-    mutationFn: async () => {
-      await aceitarOrcamento(
-        { orcamentoId: escolhido!.id, dataAgendada: dataAgendada! },
-        chaveContratacao.current,
-      );
-      // avisa a API Java: o pedido passa para o prestador, que ve o endereco completo e o telefone
-      await registrarContratacao(id, escolhido!.prestadorId);
-    },
-    onSuccess: () => {
-      setEscolhido(null);
-      chaveContratacao.current = gerarChaveUnica();
-      atualizarTudo();
-      Alert.alert('Serviço contratado!', 'O prestador já pode ver o agendamento.');
-    },
-  });
-
   const cancelar = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (motivo: string) => {
       if (contratacao && contratacao.status !== 'Concluida') {
         await alterarStatusContratacao(contratacao.id, 'Cancelada');
       }
-      await cancelarSolicitacao(id);
+      await cancelarSolicitacao(id, motivo);
     },
     onSuccess: () => {
+      setCancelando(false);
       atualizarTudo();
-      navigation.goBack();
     },
     onError: (erro) => Alert.alert('Não foi possível cancelar', mensagemDeErro(erro)),
   });
 
   const avaliar = useMutation({
     mutationFn: () => avaliarSolicitacao(id, nota, comentario.trim() || undefined),
-    onSuccess: () => setAvaliado(true),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: chaves.minhasAvaliacoes }),
   });
-
-  function escolher(orcamento: Orcamento) {
-    if (escolhido?.id !== orcamento.id) chaveContratacao.current = gerarChaveUnica();
-    setEscolhido(orcamento);
-    setDataAgendada(undefined);
-  }
-
-  function confirmarCancelamento() {
-    Alert.alert('Cancelar pedido?', 'Os prestadores deixam de ver este pedido.', [
-      { text: 'Voltar', style: 'cancel' },
-      { text: 'Cancelar pedido', style: 'destructive', onPress: () => cancelar.mutate() },
-    ]);
-  }
 
   if (pedido.isLoading) return <Carregando />;
   if (pedido.isError || !pedido.data) {
@@ -127,10 +92,14 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
   }
 
   const p = pedido.data;
-  const status = seloStatusPedido[p.status];
-  const podeEditar = p.status === 'ABERTA' && !contratacao;
-  const podeCancelar = p.status === 'ABERTA' || p.status === 'EM_ATENDIMENTO';
   const listaOrcamentos = orcamentos.data?.conteudo ?? [];
+  const pendentes = listaOrcamentos.filter((o) => o.status === 'Pendente').length;
+  const etapa = etapaDoPedido(p, contratacao);
+  const selo = seloDaEtapa(etapa, pendentes);
+  const orcamentoAceito = listaOrcamentos.find((o) => o.id === contratacao?.orcamentoId);
+  const nomePrestador = orcamentoAceito?.prestadorNome ?? p.prestador?.nome;
+  const usuarioPrestador = contratacao?.prestadorId;
+  const contratado = etapa === 'contratado' || etapa === 'execucao' || etapa === 'concluido';
 
   return (
     <ScrollView
@@ -144,9 +113,10 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
         />
       }
     >
+      {/* ---------- o pedido ---------- */}
       <View style={estilos.topo}>
         <Text style={estilos.numero}>Pedido #{p.id}</Text>
-        <Selo texto={status.texto} tom={status.tom} />
+        <Selo texto={selo.texto} tom={selo.tom} />
       </View>
       <Text style={estilos.descricao}>{p.descricao}</Text>
       {!!p.observacao && (
@@ -156,13 +126,18 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
         </Text>
       )}
       <GaleriaFotos solicitacaoId={p.id} quantidade={p.quantidadeFotos ?? 0} />
-      <Text style={estilos.meta}>
-        {p.bairro} · aberto em {formatarDataHora(p.criadaEm)}
-      </Text>
-      {!!p.endereco && (
+
+      <View style={estilos.local}>
+        <Ionicons name="location-outline" size={16} color={cores.textoSuave} />
         <Text style={estilos.meta}>
-          {p.endereco}
-          {p.status === 'ABERTA' ? ' (o prestador vê a rua depois da contratação)' : ''}
+          {contratado && p.endereco ? p.endereco : p.bairro} · aberto em{' '}
+          {formatarDataHora(p.criadaEm)}
+        </Text>
+      </View>
+      {!contratado && etapa !== 'cancelado' && (
+        <Text style={estilos.privacidade}>
+          Por enquanto os prestadores veem só o bairro. A rua e o número são liberados para quem
+          você contratar.
         </Text>
       )}
 
@@ -176,134 +151,100 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
         origem={p.origemTriagem}
       />
 
-      {contratacao && (
-        <>
-          <Titulo>Serviço contratado</Titulo>
-          <Cartao>
-            <View style={estilos.linha}>
-              <Text style={estilos.valor}>{formatarMoeda(contratacao.valorAcordado)}</Text>
+      {/* ---------- etapa: orçamentos ---------- */}
+      {etapa === 'orcamentos' && (
+        <OrcamentosRecebidos
+          orcamentos={listaOrcamentos}
+          carregando={orcamentos.isLoading}
+          aoVerProposta={(o) =>
+            navigation.navigate('PropostaOrcamento', { solicitacaoId: id, orcamentoId: o.id })
+          }
+        />
+      )}
+
+      {/* ---------- etapa: contratado / em execução / concluído ---------- */}
+      {contratado && nomePrestador && (
+        <Cartao estilo={estilos.bloco}>
+          <View style={estilos.linha}>
+            <Text style={estilos.tituloBloco}>
+              {etapa === 'concluido' ? 'Serviço realizado' : 'Prestador contratado'}
+            </Text>
+            {contratacao && (
               <Selo
                 texto={seloContratacao[contratacao.status].texto}
                 tom={seloContratacao[contratacao.status].tom}
               />
-            </View>
-            <Text style={estilos.meta}>
-              Agendado para {formatarDataHora(contratacao.dataAgendada)}
-            </Text>
-            {p.prestador && (
-              <View style={estilos.contato}>
-                <Ionicons name="person-circle-outline" size={22} color={cores.secundaria} />
-                <Text style={estilos.contatoNome}>{p.prestador.nome}</Text>
-                {!!p.prestador.telefone && (
-                  <Botao
-                    titulo="Ligar"
-                    variante="contorno"
-                    estilo={estilos.botaoLigar}
-                    aoPressionar={() => Linking.openURL(`tel:${p.prestador?.telefone}`)}
-                  />
-                )}
-              </View>
             )}
-          </Cartao>
-        </>
-      )}
-
-      {p.status === 'ABERTA' && !contratacao && (
-        <>
-          <Titulo>Orçamentos recebidos</Titulo>
-          {orcamentos.isLoading && <Subtitulo>Buscando orçamentos...</Subtitulo>}
-          {orcamentos.isError && <Subtitulo>{mensagemDeErro(orcamentos.error)}</Subtitulo>}
-          {!orcamentos.isLoading && listaOrcamentos.length === 0 && (
-            <Subtitulo>
-              Os prestadores do seu bairro já foram avisados. Os orçamentos aparecem aqui.
-            </Subtitulo>
-          )}
-          {listaOrcamentos.map((orcamento) => {
-            const selo = seloOrcamento[orcamento.status];
-            return (
-              <Cartao
-                key={orcamento.id}
-                estilo={escolhido?.id === orcamento.id ? estilos.escolhido : undefined}
-              >
-                <View style={estilos.linha}>
-                  <Text style={estilos.prestador}>{orcamento.prestadorNome}</Text>
-                  <Selo texto={selo.texto} tom={selo.tom} />
-                </View>
-                <Text
-                  accessibilityRole="link"
-                  style={estilos.verPerfil}
-                  onPress={() =>
-                    navigation.navigate('PerfilPrestador', { usuarioId: orcamento.prestadorId })
-                  }
-                >
-                  Ver perfil, avaliações e verificação
-                </Text>
-                <Text style={estilos.valor}>{formatarMoeda(orcamento.valor)}</Text>
-                <Text style={estilos.meta}>
-                  Prazo: {orcamento.prazoDias} dia(s)
-                  {textoFaixa[orcamento.posicaoNaFaixa]}
-                </Text>
-                {orcamento.posicaoNaFaixa === 'Acima' && (
-                  <Selo texto="Acima da faixa de referência" tom="alerta" />
-                )}
-                {!!orcamento.observacao && (
-                  <Text style={estilos.observacao}>
-                    {orcamento.posicaoNaFaixa === 'Acima' ? 'Motivo: ' : ''}
-                    {`“${orcamento.observacao}”`}
-                  </Text>
-                )}
-                {orcamento.status === 'Pendente' && escolhido?.id !== orcamento.id && (
-                  <Negociacao orcamento={orcamento} eu="Cliente" precoMaximo={p.precoMaximo} />
-                )}
-                {orcamento.status === 'Pendente' && escolhido?.id !== orcamento.id && (
-                  <Botao
-                    titulo="Contratar por este valor"
-                    aoPressionar={() => escolher(orcamento)}
-                    estilo={estilos.botaoCartao}
-                  />
-                )}
-                {escolhido?.id === orcamento.id && (
-                  <View style={estilos.agendar}>
-                    <Text style={estilos.rotulo}>Quando o prestador pode ir?</Text>
-                    <Opcoes<string>
-                      opcoes={datas}
-                      selecionado={dataAgendada}
-                      aoSelecionar={setDataAgendada}
-                    />
-                    {contratar.isError && (
-                      <Text style={estilos.erro}>{mensagemDeErro(contratar.error)}</Text>
-                    )}
-                    <Botao
-                      titulo="Confirmar contratação"
-                      desabilitado={!dataAgendada}
-                      carregando={contratar.isPending}
-                      aoPressionar={() => contratar.mutate()}
-                    />
-                    <Botao
-                      titulo="Voltar"
-                      variante="contorno"
-                      estilo={estilos.botaoCartao}
-                      aoPressionar={() => setEscolhido(null)}
-                    />
-                  </View>
-                )}
-              </Cartao>
-            );
-          })}
-        </>
-      )}
-
-      {p.status === 'CONCLUIDA' && (
-        <>
-          <Titulo>Avalie o prestador</Titulo>
-          {avaliado ? (
-            <Cartao>
-              <Text style={estilos.obrigado}>
-                Obrigado! Sua avaliação ajuda seus vizinhos a escolher bem.
-              </Text>
-            </Cartao>
+          </View>
+          {usuarioPrestador ? (
+            <ResumoPrestador usuarioId={usuarioPrestador} nome={nomePrestador} />
           ) : (
-            <Cartao>
+            <Text style={estilos.nomePrestador}>{nomePrestador}</Text>
+          )}
+
+          {contratacao && (
+            <View style={estilos.dados}>
+              <Dado
+                icone="cash-outline"
+                rotulo={etapa === 'concluido' ? 'Valor final pago' : 'Valor acordado'}
+                valor={formatarMoeda(contratacao.valorAcordado)}
+              />
+              <Dado
+                icone="calendar-outline"
+                rotulo="Agendado para"
+                valor={formatarDataHora(contratacao.dataAgendada)}
+              />
+            </View>
+          )}
+          {!!p.endereco && etapa !== 'concluido' && (
+            <Dado icone="home-outline" rotulo="Endereço do serviço" valor={p.endereco} />
+          )}
+
+          <View style={estilos.botoesContato}>
+            {!!p.prestador?.telefone && etapa !== 'concluido' && (
+              <Botao
+                titulo="Ligar"
+                variante="secundaria"
+                estilo={estilos.botaoMetade}
+                aoPressionar={() => Linking.openURL(`tel:${p.prestador?.telefone}`)}
+              />
+            )}
+            {usuarioPrestador && (
+              <Botao
+                titulo="Ver perfil"
+                variante="contorno"
+                estilo={estilos.botaoMetade}
+                aoPressionar={() =>
+                  navigation.navigate('PerfilPrestador', { usuarioId: usuarioPrestador })
+                }
+              />
+            )}
+          </View>
+          {etapa === 'contratado' && (
+            <Text style={estilos.privacidade}>
+              O prestador marca &quot;Iniciar serviço&quot; quando chegar ao local.
+            </Text>
+          )}
+        </Cartao>
+      )}
+
+      {/* ---------- etapa: concluído → avaliação ---------- */}
+      {etapa === 'concluido' && (
+        <Cartao estilo={estilos.bloco}>
+          {avaliacao ? (
+            <>
+              <Text style={estilos.tituloBloco}>Sua avaliação</Text>
+              <Estrelas nota={avaliacao.nota} aoMudar={() => undefined} />
+              {!!avaliacao.comentario && (
+                <Text style={estilos.infoAdicional}>“{avaliacao.comentario}”</Text>
+              )}
+            </>
+          ) : (
+            <>
+              <Text style={estilos.tituloBloco}>Avalie o prestador</Text>
+              <Text style={estilos.privacidade}>
+                Sua avaliação ajuda seus vizinhos a escolher bem.
+              </Text>
               <Estrelas nota={nota} aoMudar={setNota} />
               <CampoTexto
                 rotulo="Comentário (opcional)"
@@ -318,29 +259,70 @@ export function DetalhePedidoScreen({ route, navigation }: Props) {
                 carregando={avaliar.isPending}
                 aoPressionar={() => avaliar.mutate()}
               />
-            </Cartao>
+            </>
           )}
-        </>
+        </Cartao>
       )}
 
+      {/* ---------- etapa: cancelado ---------- */}
+      {etapa === 'cancelado' && (
+        <Cartao estilo={estilos.blocoCancelado}>
+          <Text style={estilos.tituloBloco}>Pedido cancelado</Text>
+          <Text style={estilos.meta}>Em {formatarDataHora(p.atualizadaEm)}</Text>
+          <Text style={estilos.infoAdicional}>
+            <Text style={estilos.observacaoRotulo}>Motivo: </Text>
+            {p.motivoCancelamento ?? 'não informado'}
+          </Text>
+        </Cartao>
+      )}
+
+      <HistoricoPedido pedido={p} orcamentos={listaOrcamentos} contratacao={contratacao} />
+
+      {/* ---------- ações conforme a etapa ---------- */}
       <View style={estilos.acoes}>
-        {podeEditar && (
+        {etapa === 'orcamentos' && (
           <Botao
             titulo="Editar pedido"
             variante="secundaria"
             aoPressionar={() => navigation.navigate('EditarPedido', { id })}
           />
         )}
-        {podeCancelar && (
+        {(etapa === 'orcamentos' || etapa === 'contratado') && (
           <Botao
             titulo="Cancelar pedido"
             variante="perigo"
-            carregando={cancelar.isPending}
-            aoPressionar={confirmarCancelamento}
+            aoPressionar={() => setCancelando(true)}
           />
         )}
       </View>
+
+      <ModalCancelamento
+        visivel={cancelando}
+        carregando={cancelar.isPending}
+        aoFechar={() => setCancelando(false)}
+        aoConfirmar={(motivo) => cancelar.mutate(motivo)}
+      />
     </ScrollView>
+  );
+}
+
+function Dado({
+  icone,
+  rotulo,
+  valor,
+}: {
+  icone: keyof typeof Ionicons.glyphMap;
+  rotulo: string;
+  valor: string;
+}) {
+  return (
+    <View style={estilos.dado}>
+      <Ionicons name={icone} size={20} color={cores.secundaria} />
+      <View style={estilos.dadoTextos}>
+        <Text style={estilos.dadoRotulo}>{rotulo}</Text>
+        <Text style={estilos.dadoValor}>{valor}</Text>
+      </View>
+    </View>
   );
 }
 
@@ -349,6 +331,12 @@ const estilos = StyleSheet.create({
   conteudo: { padding: espacos.md, paddingBottom: espacos.xl * 2 },
   topo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   numero: { fontFamily: fontes.seminegrito, fontSize: tamanhos.normal, color: cores.textoSuave },
+  descricao: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.medio,
+    color: cores.texto,
+    marginTop: espacos.sm,
+  },
   infoAdicional: {
     fontFamily: fontes.regular,
     fontSize: tamanhos.normal,
@@ -356,75 +344,51 @@ const estilos = StyleSheet.create({
     marginTop: espacos.sm,
   },
   observacaoRotulo: { fontFamily: fontes.seminegrito, color: cores.texto },
-  descricao: {
-    fontFamily: fontes.media,
-    fontSize: tamanhos.medio,
-    color: cores.texto,
-    marginTop: espacos.sm,
-  },
+  local: { flexDirection: 'row', alignItems: 'center', gap: espacos.xs, marginTop: espacos.md },
   meta: {
     fontFamily: fontes.regular,
     fontSize: tamanhos.pequeno,
     color: cores.textoSuave,
-    marginVertical: espacos.xs,
+    flexShrink: 1,
   },
+  privacidade: {
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.pequeno,
+    color: cores.textoSuave,
+    marginTop: espacos.xs,
+    marginBottom: espacos.md,
+  },
+  bloco: { marginTop: espacos.md },
   linha: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: espacos.sm,
+    marginBottom: espacos.md,
   },
-  prestador: {
-    fontFamily: fontes.seminegrito,
-    fontSize: tamanhos.medio,
-    color: cores.texto,
-    flexShrink: 1,
-  },
-  valor: {
+  tituloBloco: {
     fontFamily: fontes.negrito,
     fontSize: tamanhos.grande,
-    color: cores.primariaEscura,
-    marginTop: espacos.xs,
-  },
-  observacao: {
-    fontFamily: fontes.regular,
-    fontStyle: 'italic',
-    color: cores.textoSuave,
-    marginTop: espacos.xs,
-  },
-  verPerfil: {
-    fontFamily: fontes.media,
-    fontSize: tamanhos.pequeno,
-    color: cores.secundaria,
-    textDecorationLine: 'underline',
-    paddingVertical: espacos.xs,
-  },
-  escolhido: { borderColor: cores.primaria, borderWidth: 2 },
-  botaoCartao: { marginTop: espacos.sm },
-  agendar: { marginTop: espacos.md },
-  rotulo: {
-    fontFamily: fontes.media,
-    fontSize: tamanhos.normal,
     color: cores.texto,
-    marginBottom: espacos.sm,
+    marginBottom: espacos.xs,
+  },
+  nomePrestador: { fontFamily: fontes.seminegrito, fontSize: tamanhos.medio, color: cores.texto },
+  dados: { marginTop: espacos.md },
+  dado: { flexDirection: 'row', gap: espacos.sm, alignItems: 'flex-start', marginTop: espacos.sm },
+  dadoTextos: { flex: 1 },
+  dadoRotulo: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave },
+  dadoValor: { fontFamily: fontes.seminegrito, fontSize: tamanhos.normal, color: cores.texto },
+  botoesContato: { flexDirection: 'row', gap: espacos.sm, marginTop: espacos.md },
+  botaoMetade: { flex: 1 },
+  blocoCancelado: {
+    marginTop: espacos.md,
+    backgroundColor: cores.secundariaClara,
+    borderRadius: raio.medio,
   },
   erro: {
     fontFamily: fontes.media,
     color: cores.perigo,
     textAlign: 'center',
-    marginBottom: espacos.sm,
+    marginVertical: espacos.sm,
   },
-  contato: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: espacos.sm,
-    marginTop: espacos.sm,
-    padding: espacos.sm,
-    backgroundColor: cores.secundariaClara,
-    borderRadius: raio.medio,
-  },
-  contatoNome: { flex: 1, fontFamily: fontes.media, color: cores.secundaria },
-  botaoLigar: { minHeight: 36 },
-  obrigado: { fontFamily: fontes.media, color: cores.sucesso, textAlign: 'center' },
   acoes: { gap: espacos.sm, marginTop: espacos.lg },
 });
