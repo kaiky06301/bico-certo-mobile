@@ -47,7 +47,7 @@ No **Bico Certo**:
 | 14 | **Dados pessoais** | ambos | Edita nome, telefone e bairro |
 | 15 | **Alterar senha** | ambos | Troca a senha exigindo a atual, com confirmação |
 | 16 | **Perfil do prestador** | ambos | Perfil público: foto, serviços, anos de experiência, especialidades, diferenciais, região, dias e horários, selos de **verificado** e **atende emergências**, galeria de trabalhos realizados (toque abre em tela cheia), nota e avaliações recebidas. O cliente abre pelo orçamento **antes de contratar** e o prestador abre em "Ver como o cliente vê" |
-| 17 | **Perfil profissional** | prestador | Foto de perfil (câmera/galeria), nota e serviços feitos, até 3 serviços (o primeiro é o principal), tempo de experiência, especialidades e diferenciais com contador, bairros atendidos por lista, dias da semana com atalhos, horário de início e término, selo de emergências, galeria de até 6 trabalhos realizados e aviso de alterações não salvas |
+| 17 | **Perfil profissional** | prestador | Foto de perfil (câmera/galeria), nota e serviços feitos, quantos serviços quiser (o primeiro é o principal), tempo de experiência, especialidades e diferenciais com contador, bairros atendidos por lista, dias da semana com atalhos, horário de início e término, selo de emergências, galeria de até 6 trabalhos realizados e aviso de alterações não salvas |
 | 18 | **Minhas avaliações** | cliente | Avaliações que o cliente fez |
 | 19 | **Excluir conta** | ambos | Exclusão com senha e confirmação (LGPD: dados pessoais apagados) |
 | 20 | **Termos e Privacidade** | ambos | Termos de uso e política de privacidade |

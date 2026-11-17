@@ -246,12 +246,12 @@ function Formulario({ perfil }: { perfil: PerfilPrestador }) {
           opcoes={(categorias.data ?? []).map((c) => ({ valor: c.id, rotulo: c.nome }))}
           selecionados={categoriaIds}
           aoMudar={setCategoriaIds}
-          maximo={3}
           destacarPrimeiro
         />
         <Erro texto={erros.categorias} />
         <Text style={estilos.dica}>
-          Até 3. O primeiro marcado é o principal; você recebe os pedidos de todos eles.
+          Marque todos os serviços que você faz. O primeiro marcado é o principal; você recebe os
+          pedidos de todos eles.
         </Text>
       </Secao>
 

@@ -65,8 +65,7 @@ export const esquemaSenha = Yup.object({
 export const esquemaPerfilProfissional = Yup.object({
   categorias: Yup.array()
     .of(Yup.number().required())
-    .min(1, 'Escolha pelo menos um serviço que você faz')
-    .max(3, 'Escolha no máximo 3 serviços'),
+    .min(1, 'Escolha pelo menos um serviço que você faz'),
   descricao: Yup.string().trim().max(500, 'Máximo de 500 caracteres'),
   especialidades: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
   diferenciais: Yup.string().trim().max(300, 'Máximo de 300 caracteres'),
