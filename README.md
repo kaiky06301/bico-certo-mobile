@@ -35,7 +35,7 @@ No **Bico Certo**:
 | 2 | **Cadastro** | público | Cria conta de cliente ou de prestador (com o serviço que oferece) |
 | 3 | **Novo pedido** | cliente | Descreve o problema, anexa até **3 fotos** (câmera ou galeria), informação adicional opcional e **onde será o serviço** → tela **"Confira a análise"** da IA → publica o pedido |
 | 4 | **Meus pedidos** | cliente | Filtro por situação (abertos, em andamento, concluídos, cancelados) e o **próximo passo** em cada cartão ("3 orçamentos recebidos", prestador e data, "Avalie o prestador") |
-| 5 | **Detalhe do pedido** | cliente | Mesma estrutura, conteúdo conforme a etapa: **orçamentos recebidos** → **prestador contratado** (valor, data, endereço, ligar) → **valor final e avaliação** → **motivo do cancelamento**. Fotos, análise da IA e **histórico do pedido** em linha do tempo |
+| 5 | **Detalhe do pedido** | cliente | Mesma estrutura, conteúdo conforme a etapa: **orçamentos recebidos** → **prestador contratado** (valor, data, endereço e telefone) → **valor final e avaliação** → **motivo do cancelamento**. Fotos, análise da IA e **histórico do pedido** em linha do tempo |
 | 6 | **Proposta** | cliente | Perfil e avaliações do prestador, valor, prazo, o que está incluso, **negociação** (contraproposta), **aceitar e agendar** ou **recusar** |
 | 7 | **Editar pedido** | cliente | Corrige a descrição; a análise é refeita |
 | 8 | **Oportunidades** | prestador | Pedidos da sua categoria que ele **ainda não orçou**, com selo "Novo pedido", **distância aproximada** do bairro dele, quantidade de **fotos** e faixa de referência. Botão **Filtros** (urgência; ordenar por mais recentes, mais próximos ou mais urgentes). Atualiza sozinha a cada 30 s |
@@ -120,7 +120,7 @@ flowchart LR
 | `yup` | Validação dos formulários |
 | `expo-font` + `@expo-google-fonts/poppins` | Fonte da identidade visual |
 | `expo-constants` | Ler a versão e o hash do commit (tela Sobre) |
-| `expo-splash-screen` | Splash com a marca até as fontes carregarem |
+| `expo-splash-screen` | Tela de abertura com a marca, configurada no `app.json` |
 | ESLint (`eslint-config-expo`) + Prettier | Padronização do código |
 
 ---
