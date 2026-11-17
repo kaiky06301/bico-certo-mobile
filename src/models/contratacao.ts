@@ -23,6 +23,8 @@ export interface Orcamento {
   atualizadoEm: string;
   /** Proposta da negociação esperando resposta (null quando não há). */
   propostaPendente: Proposta | null;
+  /** O pedido já tem contratação ativa com outro prestador (explica o "Recusado"). */
+  clienteContratouOutro: boolean;
 }
 
 export type PosicaoNaFaixa = 'Abaixo' | 'Dentro' | 'Acima' | 'SemReferencia';

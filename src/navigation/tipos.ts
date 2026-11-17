@@ -34,6 +34,7 @@ export type ClienteStackParams = {
 
 export type PrestadorAbasParams = {
   PedidosAbertos: undefined;
+  MeusOrcamentos: undefined;
   Agenda: undefined;
   Avisos: undefined;
   Perfil: undefined;

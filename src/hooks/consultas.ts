@@ -60,7 +60,12 @@ export function useMinhasSolicitacoes() {
 }
 
 export function useSolicitacoesAbertas() {
-  return useQuery({ queryKey: chaves.abertas, queryFn: () => listarSolicitacoesAbertas() });
+  // atualiza sozinho a cada 30 s: pedido novo aparece sem o prestador precisar puxar a lista
+  return useQuery({
+    queryKey: chaves.abertas,
+    queryFn: () => listarSolicitacoesAbertas(),
+    refetchInterval: 30000,
+  });
 }
 
 export function useMeusAtendimentos() {

@@ -16,6 +16,7 @@ import { TextoLegalScreen } from '../screens/comum/TextoLegalScreen';
 import { AgendaScreen } from '../screens/prestador/AgendaScreen';
 import { PerfilProfissionalScreen } from '../screens/prestador/PerfilProfissionalScreen';
 import { DetalheServicoScreen } from '../screens/prestador/DetalheServicoScreen';
+import { MeusOrcamentosScreen } from '../screens/prestador/MeusOrcamentosScreen';
 import { PedidosAbertosScreen } from '../screens/prestador/PedidosAbertosScreen';
 import { opcoesAbas, opcoesPilha } from './opcoes';
 import { PrestadorAbasParams, PrestadorStackParams } from './tipos';
@@ -31,9 +32,19 @@ function PrestadorAbas() {
         name="PedidosAbertos"
         component={PedidosAbertosScreen}
         options={{
-          title: 'Pedidos',
+          title: 'Oportunidades',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="hammer-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Abas.Screen
+        name="MeusOrcamentos"
+        component={MeusOrcamentosScreen}
+        options={{
+          title: 'Orçamentos',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="document-text-outline" color={color} size={size} />
           ),
         }}
       />

@@ -1,7 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { ComponentRef, useRef, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { distanciaKm, textoDistancia } from '../../utils/distancia';
+import { seloDoPrestador, situacaoDoPrestador } from '../../utils/situacaoPrestador';
 import { Linking, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Botao } from '../../components/Botao';
@@ -25,6 +28,7 @@ import {
   formatarDataHora,
   formatarFaixa,
   formatarMoeda,
+  formatarQuando,
   gerarChaveUnica,
 } from '../../utils/formatacao';
 import { esquemaOrcamento, exigirJustificativa, validar } from '../../validation/esquemas';
@@ -48,6 +52,9 @@ export function DetalheServicoScreen({ route }: Props) {
   const [observacao, setObservacao] = useState('');
   const [erros, setErros] = useState<Record<string, string>>({});
   const chaveOrcamento = useRef(gerarChaveUnica());
+  const { usuario } = useAuth();
+  const rolagem = useRef<ComponentRef<typeof ScrollView>>(null);
+  const posicaoFormulario = useRef(0);
 
   const meuOrcamento = orcamentos.data?.conteudo[0];
   const contratacao = contratacoes.data?.conteudo.find(
@@ -114,10 +121,15 @@ export function DetalheServicoScreen({ route }: Props) {
   }
 
   const p = pedido.data;
-  const status = seloStatusPedido[p.status];
+  const situacao = situacaoDoPrestador(meuOrcamento, contratacao);
+  const status = p.status === 'CANCELADA' ? seloStatusPedido.CANCELADA : seloDoPrestador[situacao];
+  const podeOrcar = !meuOrcamento && !contratacao && p.status === 'ABERTA';
+  const km = distanciaKm(usuario?.bairro, p.bairro);
+  const fotos = p.quantidadeFotos ?? 0;
 
   return (
     <ScrollView
+      ref={rolagem}
       style={estilos.tela}
       contentContainerStyle={estilos.conteudo}
       refreshControl={
@@ -140,9 +152,39 @@ export function DetalheServicoScreen({ route }: Props) {
         </Text>
       )}
       <GaleriaFotos solicitacaoId={p.id} quantidade={p.quantidadeFotos ?? 0} />
-      <Text style={estilos.meta}>
-        {p.cliente.nome} · {p.bairro} · {formatarDataHora(p.criadaEm)}
-      </Text>
+      <View style={estilos.infos}>
+        <InfoLinha
+          icone="location-outline"
+          texto={`${p.bairro} · ${textoDistancia(km).toLowerCase()}`}
+        />
+        <InfoLinha
+          icone="time-outline"
+          texto={`Publicado ${formatarQuando(p.criadaEm).toLowerCase()}`}
+        />
+        <InfoLinha icone="person-outline" texto={`Cliente: ${p.cliente.nome.split(' ')[0]}`} />
+        {fotos > 0 && (
+          <InfoLinha
+            icone="camera-outline"
+            texto={fotos === 1 ? '1 foto anexada' : `${fotos} fotos anexadas`}
+          />
+        )}
+        {!contratacao && (
+          <InfoLinha
+            icone="lock-closed-outline"
+            texto="Rua, número e telefone aparecem depois que o cliente contratar você."
+          />
+        )}
+      </View>
+
+      {podeOrcar && (
+        <Botao
+          titulo="Enviar orçamento"
+          aoPressionar={() =>
+            rolagem.current?.scrollTo({ y: posicaoFormulario.current, animated: true })
+          }
+          estilo={estilos.ctaTopo}
+        />
+      )}
 
       <CartaoTriagem
         categoria={p.categoria.nome}
@@ -231,9 +273,13 @@ export function DetalheServicoScreen({ route }: Props) {
             </View>
             <Text style={estilos.meta}>Prazo de {meuOrcamento.prazoDias} dia(s)</Text>
             <Text style={estilos.meta}>
-              {meuOrcamento.status === 'Recusado'
+              {situacao === 'outroContratado'
                 ? 'O cliente escolheu outro prestador desta vez.'
-                : 'Aguardando o cliente escolher. Você será avisado.'}
+                : situacao === 'recusado'
+                  ? 'O cliente recusou este orçamento.'
+                  : situacao === 'suaVez'
+                    ? 'O cliente fez uma proposta. Responda abaixo.'
+                    : 'Aguardando o cliente escolher. Você será avisado.'}
             </Text>
             {meuOrcamento.status === 'Pendente' && (
               <Negociacao orcamento={meuOrcamento} eu="Prestador" precoMaximo={p.precoMaximo} />
@@ -241,10 +287,26 @@ export function DetalheServicoScreen({ route }: Props) {
           </Cartao>
         </>
       ) : p.status === 'ABERTA' ? (
-        <>
+        <View onLayout={(e) => (posicaoFormulario.current = e.nativeEvent.layout.y)}>
           <Titulo>Enviar orçamento</Titulo>
           <Subtitulo>{`Faixa de referência para este serviço: ${formatarFaixa(p.precoMinimo, p.precoMaximo)}. Você pode cobrar mais, mas explique o motivo na observação.`}</Subtitulo>
           <Cartao>
+            <Text style={estilos.rotuloAtalho}>Sugestões pela faixa de referência</Text>
+            <View style={estilos.atalhos}>
+              {[
+                { rotulo: 'Mínimo', v: p.precoMinimo },
+                { rotulo: 'Meio da faixa', v: Math.round((p.precoMinimo + p.precoMaximo) / 2) },
+                { rotulo: 'Máximo', v: p.precoMaximo },
+              ].map((a) => (
+                <Botao
+                  key={a.rotulo}
+                  titulo={`${a.rotulo}\n${formatarMoeda(a.v)}`}
+                  variante="contorno"
+                  estilo={estilos.atalho}
+                  aoPressionar={() => setValor(String(a.v))}
+                />
+              ))}
+            </View>
             <CampoTexto
               rotulo="Valor (R$)"
               keyboardType="decimal-pad"
@@ -276,13 +338,39 @@ export function DetalheServicoScreen({ route }: Props) {
               aoPressionar={aoEnviar}
             />
           </Cartao>
-        </>
+        </View>
       ) : null}
     </ScrollView>
   );
 }
 
+function InfoLinha({ icone, texto }: { icone: keyof typeof Ionicons.glyphMap; texto: string }) {
+  return (
+    <View style={estilos.infoLinha}>
+      <Ionicons name={icone} size={16} color={cores.secundaria} />
+      <Text style={estilos.infoTexto}>{texto}</Text>
+    </View>
+  );
+}
+
 const estilos = StyleSheet.create({
+  infos: { gap: espacos.xs, marginTop: espacos.md, marginBottom: espacos.sm },
+  infoLinha: { flexDirection: 'row', alignItems: 'center', gap: espacos.sm },
+  infoTexto: {
+    flex: 1,
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.pequeno,
+    color: cores.texto,
+  },
+  ctaTopo: { marginVertical: espacos.sm },
+  rotuloAtalho: {
+    fontFamily: fontes.media,
+    fontSize: tamanhos.pequeno,
+    color: cores.textoSuave,
+    marginBottom: espacos.xs,
+  },
+  atalhos: { flexDirection: 'row', gap: espacos.xs, marginBottom: espacos.md },
+  atalho: { flex: 1, paddingHorizontal: 2 },
   tela: { flex: 1, backgroundColor: cores.fundo },
   conteudo: { padding: espacos.md, paddingBottom: espacos.xl * 2 },
   topo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

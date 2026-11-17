@@ -24,6 +24,8 @@ interface Props {
   proximoPasso?: ProximoPasso;
   /** Valor combinado (substitui a faixa de referência depois da contratação). */
   valorCombinado?: string;
+  /** Linhas extras com ícone (ex.: distância e fotos, na visão do prestador). */
+  detalhes?: { icone: keyof typeof Ionicons.glyphMap; texto: string }[];
 }
 
 export function CartaoPedido({
@@ -32,6 +34,7 @@ export function CartaoPedido({
   situacao,
   proximoPasso,
   valorCombinado,
+  detalhes,
 }: Props) {
   const status = situacao ?? seloStatusPedido[pedido.status];
   const urgencia = seloUrgencia[pedido.urgencia];
@@ -52,6 +55,16 @@ export function CartaoPedido({
           <Text style={estilos.textoInfo}>{pedido.bairro}</Text>
         </View>
       </View>
+      {detalhes && detalhes.length > 0 && (
+        <View style={estilos.detalhes}>
+          {detalhes.map((d) => (
+            <View key={d.texto} style={estilos.info}>
+              <Ionicons name={d.icone} size={14} color={cores.secundaria} />
+              <Text style={estilos.textoDetalhe}>{d.texto}</Text>
+            </View>
+          ))}
+        </View>
+      )}
       <View style={estilos.rodape}>
         <Text style={estilos.preco}>
           {valorCombinado ?? formatarFaixa(pedido.precoMinimo, pedido.precoMaximo)}
@@ -107,6 +120,8 @@ const estilos = StyleSheet.create({
   },
   info: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   textoInfo: { fontFamily: fontes.regular, fontSize: tamanhos.pequeno, color: cores.textoSuave },
+  detalhes: { flexDirection: 'row', flexWrap: 'wrap', gap: espacos.md, marginTop: espacos.sm },
+  textoDetalhe: { fontFamily: fontes.media, fontSize: tamanhos.pequeno, color: cores.secundaria },
   passo: {
     flexDirection: 'row',
     alignItems: 'center',

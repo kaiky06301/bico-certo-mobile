@@ -38,20 +38,21 @@ No **Bico Certo**:
 | 5 | **Detalhe do pedido** | cliente | Mesma estrutura, conteúdo conforme a etapa: **orçamentos recebidos** → **prestador contratado** (valor, data, endereço, ligar) → **valor final e avaliação** → **motivo do cancelamento**. Fotos, análise da IA e **histórico do pedido** em linha do tempo |
 | 6 | **Proposta** | cliente | Perfil e avaliações do prestador, valor, prazo, o que está incluso, **negociação** (contraproposta), **aceitar e agendar** ou **recusar** |
 | 7 | **Editar pedido** | cliente | Corrige a descrição; a análise é refeita |
-| 8 | **Pedidos abertos** | prestador | Pedidos da sua área esperando orçamento |
-| 9 | **Detalhe do serviço** | prestador | Envia orçamento, **negocia o valor** com o cliente, inicia e conclui o serviço |
-| 10 | **Agenda** | prestador | Serviços contratados em ordem de data |
-| 11 | **Avisos** | ambos | Central de acompanhamento: filtros **Todas / Não lidas / Lidas**, ícone e título por **tipo** (orçamento, negociação, contratação, serviço, conclusão, cancelamento), valor e **atalho** ("Ver orçamento →" abre a proposta). Não lidos com fundo laranja e selo "Novo"; ao tocar, vira lido. Menu ⋯: marcar todas como lidas e limpar lidas; segurar exclui um aviso |
-| 12 | **Perfil** | ambos | Cabeçalho com avatar, papel, nota e selo de verificado; seções **Minha conta**, **Perfil profissional** (prestador) e **Configurações** (notificações, termos, privacidade, excluir conta) e logout |
-| 13 | **Dados pessoais** | ambos | Edita nome, telefone e bairro |
-| 14 | **Alterar senha** | ambos | Troca a senha exigindo a atual, com confirmação |
-| 15 | **Perfil do prestador** | ambos | Perfil público: serviço, experiência, região, disponibilidade, nota, **selo de verificado** e avaliações recebidas. O cliente abre pelo orçamento **antes de contratar** e o prestador abre em "Ver como o cliente vê" |
-| 16 | **Perfil profissional** | prestador | Edita serviço, descrição, região de atendimento e disponibilidade |
-| 17 | **Minhas avaliações** | cliente | Avaliações que o cliente fez |
-| 18 | **Excluir conta** | ambos | Exclusão com senha e confirmação (LGPD: dados pessoais apagados) |
-| 19 | **Termos e Privacidade** | ambos | Termos de uso e política de privacidade |
-| 20 | **Meus endereços** | ambos | Lista de endereços (casa, casa dos pais, trabalho...): adicionar, editar, **excluir** e marcar o principal |
-| 21 | **Novo / Editar endereço** | ambos | Nome do endereço, rua e número, complemento, bairro, cidade e UF |
+| 8 | **Oportunidades** | prestador | Pedidos da sua categoria que ele **ainda não orçou**, com selo "Novo pedido", **distância aproximada** do bairro dele, quantidade de **fotos** e faixa de referência. Botão **Filtros** (urgência; ordenar por mais recentes, mais próximos ou mais urgentes). Atualiza sozinha a cada 30 s |
+| 9 | **Meus orçamentos** | prestador | Tudo o que ele já orçou, com a situação: orçamento enviado, em negociação, **responder proposta**, contratado, contratado outro prestador, recusado. Filtros e aviso de quantos clientes esperam resposta |
+| 10 | **Detalhe do serviço** | prestador | Situação do ponto de vista do prestador, bairro e distância, data, fotos e análise da IA; botão **Enviar orçamento** no topo e atalhos de preço (mínimo, meio e máximo da faixa); **negocia o valor**, inicia e conclui o serviço. Rua e telefone só depois da contratação |
+| 11 | **Agenda** | prestador | Serviços contratados em ordem de data |
+| 12 | **Avisos** | ambos | Central de acompanhamento: filtros **Todas / Não lidas / Lidas**, ícone e título por **tipo** (orçamento, negociação, contratação, serviço, conclusão, cancelamento), valor e **atalho** ("Ver orçamento →" abre a proposta). Não lidos com fundo laranja e selo "Novo"; ao tocar, vira lido. Menu ⋯: marcar todas como lidas e limpar lidas; segurar exclui um aviso |
+| 13 | **Perfil** | ambos | Cabeçalho com avatar, papel, nota e selo de verificado; seções **Minha conta**, **Perfil profissional** (prestador) e **Configurações** (notificações, termos, privacidade, excluir conta) e logout |
+| 14 | **Dados pessoais** | ambos | Edita nome, telefone e bairro |
+| 15 | **Alterar senha** | ambos | Troca a senha exigindo a atual, com confirmação |
+| 16 | **Perfil do prestador** | ambos | Perfil público: serviço, experiência, região, disponibilidade, nota, **selo de verificado** e avaliações recebidas. O cliente abre pelo orçamento **antes de contratar** e o prestador abre em "Ver como o cliente vê" |
+| 17 | **Perfil profissional** | prestador | Edita serviço, descrição, região de atendimento e disponibilidade |
+| 18 | **Minhas avaliações** | cliente | Avaliações que o cliente fez |
+| 19 | **Excluir conta** | ambos | Exclusão com senha e confirmação (LGPD: dados pessoais apagados) |
+| 20 | **Termos e Privacidade** | ambos | Termos de uso e política de privacidade |
+| 21 | **Meus endereços** | ambos | Lista de endereços (casa, casa dos pais, trabalho...): adicionar, editar, **excluir** e marcar o principal |
+| 22 | **Novo / Editar endereço** | ambos | Nome do endereço, rua e número, complemento, bairro, cidade e UF |
 | + | **Sobre o App** | ambos | Versão e **hash do commit** de referência (não conta para o mínimo de 6 telas) |
 
 ---
@@ -60,7 +61,7 @@ No **Bico Certo**:
 
 | Requisito | Como foi feito |
 |---|---|
-| **1. Mínimo de 6 telas + navegação** | 21 telas + Sobre, com **React Navigation**: pilha de autenticação e, depois do login, abas e pilha diferentes para cliente e prestador (`src/navigation`) |
+| **1. Mínimo de 6 telas + navegação** | 22 telas + Sobre, com **React Navigation**: pilha de autenticação e, depois do login, abas e pilha diferentes para cliente e prestador (`src/navigation`) |
 | **2. CRUD com a API (Axios)** | **Pedidos (API Java):** criar (`POST`), listar e detalhar (`GET`), editar (`PUT`) e cancelar (`DELETE`). Também orçamentos e contratações na API .NET. Loaders, mensagens de erro, "tentar de novo" e puxar para atualizar em todas as listas |
 | **3. Autenticação** | Cadastro e login reais na API Java (JWT), **sessão persistida** (AsyncStorage) com expiração, **logout** que limpa a sessão e o cache, e **rotas protegidas** (sem login só existem Login e Cadastro). Token expirado (401) encerra a sessão automaticamente |
 | **4. Estilização** | Identidade própria: paleta laranja e azul-marinho (`src/theme/cores.ts`), fonte **Poppins**, logo, ícone e splash próprios (`assets/`), ícones Ionicons, componentes com área de toque ≥ 48 px e rótulos de acessibilidade |
