@@ -1,10 +1,27 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { cores } from '../theme/cores';
 import { fontes } from '../theme/tipografia';
 
-/** Avatar com as iniciais do nome (ex.: "Maria Souza" -> "MS"). */
-export function Avatar({ nome, tamanho = 72 }: { nome: string; tamanho?: number }) {
+interface Props {
+  nome: string;
+  tamanho?: number;
+  /** Foto de perfil (data URI); sem foto mostra as iniciais. */
+  foto?: string | null;
+}
+
+/** Foto de perfil ou as iniciais do nome (ex.: "Maria Souza" -> "MS"). */
+export function Avatar({ nome, tamanho = 72, foto }: Props) {
+  const forma = { width: tamanho, height: tamanho, borderRadius: tamanho / 2 };
+  if (foto) {
+    return (
+      <Image
+        source={{ uri: foto }}
+        accessibilityLabel={`Foto de ${nome}`}
+        style={[estilos.avatar, forma]}
+      />
+    );
+  }
   const iniciais = nome
     .split(' ')
     .filter(Boolean)
@@ -12,10 +29,7 @@ export function Avatar({ nome, tamanho = 72 }: { nome: string; tamanho?: number 
     .map((parte) => parte.charAt(0).toUpperCase())
     .join('');
   return (
-    <View
-      accessibilityLabel={`Foto de ${nome}`}
-      style={[estilos.avatar, { width: tamanho, height: tamanho, borderRadius: tamanho / 2 }]}
-    >
+    <View accessibilityLabel={`Foto de ${nome}`} style={[estilos.avatar, forma]}>
       <Text style={[estilos.iniciais, { fontSize: tamanho * 0.38 }]}>{iniciais}</Text>
     </View>
   );

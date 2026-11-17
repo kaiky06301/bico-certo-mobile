@@ -1,76 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { cores } from '../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../theme/tipografia';
+import { escolherFotos, FotoEscolhida, OrigemFoto } from '../utils/fotos';
 
+export type { FotoEscolhida };
 export const MAXIMO_FOTOS = 3;
-const TAMANHO_MAXIMO = 3_000_000; // caracteres em base64 (~2 MB), mesmo limite da API
-
-/** Foto escolhida: `uri` para mostrar na tela e `dados` (data URI base64) para enviar à API. */
-export interface FotoEscolhida {
-  uri: string;
-  dados: string;
-}
 
 interface Props {
   fotos: FotoEscolhida[];
   aoMudar: (fotos: FotoEscolhida[]) => void;
 }
 
-const opcoesDeFoto: ImagePicker.ImagePickerOptions = {
-  mediaTypes: ['images'],
-  quality: 0.3, // foto menor = envio rápido no 4G
-  base64: true,
-};
-
-function converter(assets: ImagePicker.ImagePickerAsset[]): FotoEscolhida[] {
-  const validas: FotoEscolhida[] = [];
-  for (const asset of assets) {
-    if (!asset.base64) continue;
-    const tipo = asset.mimeType === 'image/png' ? 'image/png' : 'image/jpeg';
-    const dados = `data:${tipo};base64,${asset.base64}`;
-    if (dados.length > TAMANHO_MAXIMO) {
-      Alert.alert('Foto muito grande', 'Escolha outra foto ou tire uma nova.');
-      continue;
-    }
-    validas.push({ uri: asset.uri, dados });
-  }
-  return validas;
-}
-
 /** "Fotos do problema (opcional)": até 3 fotos pela câmera ou pela galeria. */
 export function FotosProblema({ fotos, aoMudar }: Props) {
   const restantes = MAXIMO_FOTOS - fotos.length;
 
-  async function tirarFoto() {
-    const permissao = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permissao.granted) {
-      Alert.alert('Sem acesso à câmera', 'Libere a câmera para o app nos Ajustes do celular.');
-      return;
-    }
-    const resultado = await ImagePicker.launchCameraAsync(opcoesDeFoto);
-    if (!resultado.canceled)
-      aoMudar([...fotos, ...converter(resultado.assets)].slice(0, MAXIMO_FOTOS));
-  }
-
-  async function escolherDaGaleria() {
-    const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissao.granted) {
-      Alert.alert(
-        'Sem acesso às fotos',
-        'Libere o acesso às fotos para o app nos Ajustes do celular.',
-      );
-      return;
-    }
-    const resultado = await ImagePicker.launchImageLibraryAsync({
-      ...opcoesDeFoto,
-      allowsMultipleSelection: true,
-      selectionLimit: restantes,
-    });
-    if (!resultado.canceled)
-      aoMudar([...fotos, ...converter(resultado.assets)].slice(0, MAXIMO_FOTOS));
+  async function adicionar(origem: OrigemFoto) {
+    const novas = await escolherFotos(origem, { limite: restantes });
+    if (novas.length) aoMudar([...fotos, ...novas].slice(0, MAXIMO_FOTOS));
   }
 
   return (
@@ -109,7 +58,7 @@ export function FotosProblema({ fotos, aoMudar }: Props) {
         <View style={estilos.botoes}>
           <Pressable
             accessibilityRole="button"
-            onPress={tirarFoto}
+            onPress={() => void adicionar('camera')}
             style={({ pressed }) => [estilos.botao, pressed && { opacity: 0.6 }]}
           >
             <Ionicons name="camera-outline" size={20} color={cores.secundaria} />
@@ -117,7 +66,7 @@ export function FotosProblema({ fotos, aoMudar }: Props) {
           </Pressable>
           <Pressable
             accessibilityRole="button"
-            onPress={escolherDaGaleria}
+            onPress={() => void adicionar('galeria')}
             style={({ pressed }) => [estilos.botao, pressed && { opacity: 0.6 }]}
           >
             <Ionicons name="images-outline" size={20} color={cores.secundaria} />

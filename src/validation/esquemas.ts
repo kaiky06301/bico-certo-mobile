@@ -63,10 +63,21 @@ export const esquemaSenha = Yup.object({
 });
 
 export const esquemaPerfilProfissional = Yup.object({
-  categoriaId: Yup.number().required('Escolha o serviço que você faz'),
+  categorias: Yup.array()
+    .of(Yup.number().required())
+    .min(1, 'Escolha pelo menos um serviço que você faz')
+    .max(3, 'Escolha no máximo 3 serviços'),
   descricao: Yup.string().trim().max(500, 'Máximo de 500 caracteres'),
-  regiaoAtendimento: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
-  disponibilidade: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
+  especialidades: Yup.string().trim().max(200, 'Máximo de 200 caracteres'),
+  diferenciais: Yup.string().trim().max(300, 'Máximo de 300 caracteres'),
+  bairros: Yup.array().of(Yup.string()).min(1, 'Marque pelo menos um bairro onde você atende'),
+  dias: Yup.array().of(Yup.string()).min(1, 'Marque pelo menos um dia de atendimento'),
+  horarioInicio: Yup.string().required(),
+  horarioFim: Yup.string()
+    .required()
+    .test('depois', 'O horário de término deve ser depois do início', function (fim) {
+      return !fim || fim > this.parent.horarioInicio;
+    }),
   bairro: Yup.string().trim().required('Informe seu bairro'),
   telefone,
 });

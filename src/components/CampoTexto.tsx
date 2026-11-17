@@ -6,9 +6,12 @@ import { espacos, fontes, raio, tamanhos } from '../theme/tipografia';
 interface Props extends TextInputProps {
   rotulo: string;
   erro?: string;
+  /** Mostra "120/500" embaixo do campo (usa o maxLength). */
+  contador?: boolean;
 }
 
-export function CampoTexto({ rotulo, erro, multiline, style, ...props }: Props) {
+export function CampoTexto({ rotulo, erro, multiline, contador, style, ...props }: Props) {
+  const usados = String(props.value ?? '').length;
   return (
     <View style={estilos.container}>
       <Text style={estilos.rotulo}>{rotulo}</Text>
@@ -19,7 +22,16 @@ export function CampoTexto({ rotulo, erro, multiline, style, ...props }: Props) 
         style={[estilos.campo, multiline && estilos.multilinha, !!erro && estilos.campoErro, style]}
         {...props}
       />
-      {!!erro && <Text style={estilos.erro}>{erro}</Text>}
+      {(!!erro || (contador && props.maxLength)) && (
+        <View style={estilos.rodape}>
+          <Text style={estilos.erro}>{erro ?? ''}</Text>
+          {contador && !!props.maxLength && (
+            <Text style={estilos.contador}>
+              {usados}/{props.maxLength}
+            </Text>
+          )}
+        </View>
+      )}
     </View>
   );
 }
@@ -45,7 +57,15 @@ const estilos = StyleSheet.create({
   },
   multilinha: { minHeight: 110, paddingTop: espacos.sm, textAlignVertical: 'top' },
   campoErro: { borderColor: cores.perigo },
+  rodape: { flexDirection: 'row', justifyContent: 'space-between', gap: espacos.sm },
+  contador: {
+    fontFamily: fontes.regular,
+    fontSize: tamanhos.pequeno,
+    color: cores.textoSuave,
+    marginTop: espacos.xs,
+  },
   erro: {
+    flex: 1,
     fontFamily: fontes.regular,
     fontSize: tamanhos.pequeno,
     color: cores.perigo,

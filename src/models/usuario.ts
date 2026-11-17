@@ -60,6 +60,30 @@ export interface PerfilPrestador {
   /** Serviços que o prestador já concluiu pelo Bico Certo. */
   servicosConcluidos: number;
   membroDesde: string;
+  /** Outros serviços que ele também faz (além do principal). */
+  outrasCategorias: { id: number; nome: string }[];
+  /** Foto de perfil (data URI) ou null. */
+  foto: string | null;
+  anosExperiencia: number | null;
+  especialidades: string | null;
+  diferenciais: string | null;
+  /** SEG, TER, QUA, QUI, SEX, SAB, DOM */
+  diasAtendimento: DiaSemana[];
+  horarioInicio: string | null;
+  horarioFim: string | null;
+  atendeEmergencia: boolean;
+  /** Fotos na galeria de trabalhos realizados. */
+  quantidadeFotos: number;
+}
+
+export type DiaSemana = 'SEG' | 'TER' | 'QUA' | 'QUI' | 'SEX' | 'SAB' | 'DOM';
+
+/** Foto da galeria de trabalhos realizados. */
+export interface FotoTrabalho {
+  id: number;
+  imagem: string;
+  legenda: string | null;
+  criadaEm: string;
 }
 
 export interface PerfilPrestadorRequest {
@@ -69,6 +93,14 @@ export interface PerfilPrestadorRequest {
   disponibilidade?: string;
   bairro: string;
   telefone?: string;
+  outrasCategoriaIds?: number[];
+  anosExperiencia?: number;
+  especialidades?: string;
+  diferenciais?: string;
+  diasAtendimento?: DiaSemana[];
+  horarioInicio?: string;
+  horarioFim?: string;
+  atendeEmergencia?: boolean;
 }
 
 export interface Sessao {

@@ -5,6 +5,7 @@ import {
   ContaRequest,
   Endereco,
   EnderecoRequest,
+  FotoTrabalho,
   PerfilPrestador,
   PerfilPrestadorRequest,
   Usuario,
@@ -50,6 +51,35 @@ export async function atualizarMeuPerfilPrestador(
 ): Promise<PerfilPrestador> {
   const { data } = await apiJava.put<PerfilPrestador>('/api/prestadores/me', dados);
   return data;
+}
+
+/** Foto de perfil do prestador (data URI JPEG/PNG); null remove a foto. */
+export async function definirFotoDePerfil(imagem: string | null): Promise<PerfilPrestador> {
+  const { data } = imagem
+    ? await apiJava.put<PerfilPrestador>('/api/prestadores/me/foto', { imagem })
+    : await apiJava.delete<PerfilPrestador>('/api/prestadores/me/foto');
+  return data;
+}
+
+/** Galeria de trabalhos realizados (pública). */
+export async function listarGaleria(prestadorId: number): Promise<FotoTrabalho[]> {
+  const { data } = await apiJava.get<FotoTrabalho[]>(`/api/prestadores/${prestadorId}/fotos`);
+  return data;
+}
+
+export async function adicionarFotoNaGaleria(
+  imagem: string,
+  legenda?: string,
+): Promise<FotoTrabalho> {
+  const { data } = await apiJava.post<FotoTrabalho>('/api/prestadores/me/fotos', {
+    imagem,
+    legenda,
+  });
+  return data;
+}
+
+export async function removerFotoDaGaleria(fotoId: number): Promise<void> {
+  await apiJava.delete(`/api/prestadores/me/fotos/${fotoId}`);
 }
 
 /** A API .NET guarda o id do usuário do prestador; o perfil público é buscado por ele. */

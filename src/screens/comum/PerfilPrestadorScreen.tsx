@@ -6,6 +6,7 @@ import { Avatar } from '../../components/Avatar';
 import { Cartao } from '../../components/Cartao';
 import { CartaoAvaliacao } from '../../components/CartaoAvaliacao';
 import { Carregando, MensagemErro } from '../../components/Estados';
+import { GaleriaTrabalhos } from '../../components/GaleriaTrabalhos';
 import { Selo } from '../../components/Selo';
 import { Subtitulo, Titulo } from '../../components/Titulo';
 import { useAvaliacoesPrestador, usePerfilPrestador } from '../../hooks/consultas';
@@ -13,6 +14,11 @@ import { cores } from '../../theme/cores';
 import { espacos, fontes, raio, tamanhos } from '../../theme/tipografia';
 import { mensagemDeErro } from '../../utils/erros';
 import { formatarData } from '../../utils/formatacao';
+import {
+  disponibilidadeDoPerfil,
+  servicosDoPerfil,
+  textoExperiencia,
+} from '../../utils/perfilProfissional';
 
 /**
  * Perfil público do prestador: o cliente abre pelo orçamento antes de contratar
@@ -53,10 +59,13 @@ export function PerfilPrestadorScreen() {
       }
     >
       <Cartao estilo={estilos.cabecalho}>
-        <Avatar nome={p.nome} tamanho={80} />
+        <Avatar nome={p.nome} foto={p.foto} tamanho={80} />
         <View style={estilos.identificacao}>
           <Text style={estilos.nome}>{p.nome}</Text>
-          <Text style={estilos.categoria}>{p.categoria.nome}</Text>
+          <Text style={estilos.categoria}>{servicosDoPerfil(p)}</Text>
+          {!!textoExperiencia(p.anosExperiencia) && (
+            <Text style={estilos.categoria}>{textoExperiencia(p.anosExperiencia)}</Text>
+          )}
           <Text style={estilos.nota}>
             {p.totalAvaliacoes > 0
               ? `★ ${p.notaMedia.toFixed(1).replace('.', ',')} (${p.totalAvaliacoes} avaliações)`
@@ -67,6 +76,7 @@ export function PerfilPrestadorScreen() {
           ) : (
             <Selo texto="Identidade em análise" tom="neutro" />
           )}
+          {p.atendeEmergencia && <Selo texto="Atende emergências" tom="alerta" />}
         </View>
       </Cartao>
 
@@ -86,7 +96,17 @@ export function PerfilPrestadorScreen() {
       </View>
 
       <Cartao estilo={estilos.detalhes}>
-        <Info icone="construct-outline" titulo="Serviço" texto={p.categoria.nome} />
+        <Info
+          icone="construct-outline"
+          titulo={p.outrasCategorias?.length ? 'Serviços' : 'Serviço'}
+          texto={servicosDoPerfil(p)}
+        />
+        {!!p.especialidades && (
+          <Info icone="build-outline" titulo="Especialidades" texto={p.especialidades} />
+        )}
+        {!!p.diferenciais && (
+          <Info icone="ribbon-outline" titulo="Diferenciais" texto={p.diferenciais} />
+        )}
         <Info
           icone="chatbox-ellipses-outline"
           titulo="Sobre o trabalho"
@@ -100,7 +120,10 @@ export function PerfilPrestadorScreen() {
         <Info
           icone="time-outline"
           titulo="Disponibilidade"
-          texto={p.disponibilidade || 'Combinar com o prestador'}
+          texto={
+            disponibilidadeDoPerfil(p) +
+            (p.atendeEmergencia ? '\nAtende emergências fora desse horário' : '')
+          }
         />
         <Info
           icone="calendar-outline"
@@ -108,6 +131,13 @@ export function PerfilPrestadorScreen() {
           texto={formatarData(p.membroDesde)}
         />
       </Cartao>
+
+      {p.quantidadeFotos > 0 && (
+        <>
+          <Titulo>Trabalhos realizados</Titulo>
+          <GaleriaTrabalhos prestadorId={p.id} quantidade={p.quantidadeFotos} />
+        </>
+      )}
 
       <Titulo>Avaliações recebidas</Titulo>
       {avaliacoes.isLoading && <Subtitulo>Carregando avaliações...</Subtitulo>}

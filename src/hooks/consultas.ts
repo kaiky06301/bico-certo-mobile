@@ -7,6 +7,7 @@ import {
   buscarPerfilPrestadorPorUsuario,
   listarEnderecos,
   listarAvaliacoesDoPrestador,
+  listarGaleria,
   listarMinhasAvaliacoes,
 } from '../services/contaService';
 import { carregarPreferencias } from '../services/preferenciasStorage';
@@ -39,6 +40,7 @@ export const chaves = {
   meuPerfilPrestador: ['prestadores', 'me'] as const,
   perfilPrestador: (usuarioId: number) => ['prestadores', 'usuario', usuarioId] as const,
   avaliacoesPrestador: (prestadorId: number) => ['prestadores', prestadorId, 'avaliacoes'] as const,
+  galeria: (prestadorId: number) => ['prestadores', prestadorId, 'galeria'] as const,
   preferencias: ['preferencias'] as const,
   enderecos: ['conta', 'enderecos'] as const,
   naoLidas: ['notificacoes', 'naoLidas'] as const,
@@ -148,5 +150,14 @@ export function useAvaliacoesPrestador(prestadorId: number | undefined) {
     queryKey: chaves.avaliacoesPrestador(prestadorId ?? 0),
     queryFn: () => listarAvaliacoesDoPrestador(prestadorId!),
     enabled: !!prestadorId,
+  });
+}
+
+/** Fotos de trabalhos realizados; só busca quando o perfil diz que há fotos. */
+export function useGaleria(prestadorId: number | undefined, quantidade = 1) {
+  return useQuery({
+    queryKey: chaves.galeria(prestadorId ?? 0),
+    queryFn: () => listarGaleria(prestadorId!),
+    enabled: !!prestadorId && quantidade > 0,
   });
 }

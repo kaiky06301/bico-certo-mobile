@@ -21,7 +21,7 @@ export function ResumoPrestador({ usuarioId, nome, tamanhoAvatar = 52 }: Props) 
 
   return (
     <View style={estilos.linha}>
-      <Avatar nome={nome} tamanho={tamanhoAvatar} />
+      <Avatar nome={nome} foto={p?.foto} tamanho={tamanhoAvatar} />
       <View style={estilos.textos}>
         <View style={estilos.nomeLinha}>
           <Text style={estilos.nome} numberOfLines={1}>
@@ -56,7 +56,11 @@ export function ResumoPrestador({ usuarioId, nome, tamanhoAvatar = 52 }: Props) 
         )}
         {p && (
           <Text style={estilos.textoSuave} numberOfLines={1}>
-            {p.categoria.nome} · {p.regiaoAtendimento || p.bairro}
+            {p.categoria.nome}
+            {p.anosExperiencia
+              ? ` · ${p.anosExperiencia} ${p.anosExperiencia === 1 ? 'ano' : 'anos'} de experiência`
+              : ''}
+            {p.atendeEmergencia ? ' · Emergências' : ''}
           </Text>
         )}
       </View>

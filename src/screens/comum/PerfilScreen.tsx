@@ -46,7 +46,7 @@ export function PerfilScreen() {
   return (
     <ScrollView style={estilos.tela} contentContainerStyle={estilos.conteudo}>
       <Cartao estilo={estilos.cabecalho}>
-        <Avatar nome={usuario.nome} />
+        <Avatar nome={usuario.nome} foto={perfil?.foto} />
         <View style={estilos.identificacao}>
           <Text style={estilos.nome}>{usuario.nome}</Text>
           <Text style={estilos.email}>{usuario.email}</Text>
