@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | **Repositório deste app** | https://github.com/kaiky06301/bico-certo-mobile |
-| **Vídeo (até 5 min)** | `LINK_DO_VIDEO` |
+| **Vídeo (até 5 min)** | https://youtu.be/cjThQorieMw |
 | **Publicação (Firebase App Distribution)** | https://appdistribution.firebase.google.com/testerapps/1:1003296105104:android:527de04e9a3d6787596e15 (APK do commit `b8e7c0f`, professor cadastrado como tester) |
 | **API Java (usuários, pedidos e triagem com IA)** | https://github.com/kaiky06301/bico-certo-java |
 | **API .NET (orçamentos e contratações)** | https://github.com/kaiky06301/bico-certo-dotnet |
@@ -68,7 +68,7 @@ No **Bico Certo**:
 | **3. Autenticação** | Cadastro e login reais na API Java (JWT), **sessão persistida** (AsyncStorage) com expiração, **logout** que limpa a sessão e o cache, e **rotas protegidas** (sem login só existem Login e Cadastro). Token expirado (401) encerra a sessão automaticamente |
 | **4. Estilização** | Identidade própria: paleta laranja e azul-marinho (`src/theme/cores.ts`), fonte **Poppins**, logo, ícone e splash próprios (`assets/`), ícones Ionicons, componentes com área de toque ≥ 48 px e rótulos de acessibilidade |
 | **5. Arquitetura** | Camadas separadas por responsabilidade (abaixo), TypeScript, **ESLint + Prettier** (`npm run lint`, `npm run format`) |
-| **6. Vídeo** | `LINK_DO_VIDEO` |
+| **6. Vídeo** | https://youtu.be/cjThQorieMw |
 | **7. Publicação** | Firebase App Distribution, com o professor como testador; tela **Sobre o App** com o hash do commit (`app.config.js`) |
 
 ---
